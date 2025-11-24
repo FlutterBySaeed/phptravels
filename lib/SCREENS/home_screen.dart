@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:phptravels/WIDGETS/hero_section.dart';
-import 'package:phptravels/WIDGETS/nav_bar.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -9,23 +8,22 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          const HeroSection(),
-          Expanded(
-            child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const HeroSection(),
+            Padding(
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  
+                  // Your home screen content
                 ],
               ),
             ),
-          ),
-          SafeArea(
-            child: const NavBar(),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

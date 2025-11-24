@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:phptravels/SCREENS/home_screen.dart';
+import 'package:phptravels/SCREENS/navigation.dart';
 
 void main() {
   runApp(const PHPTRAVELS());
@@ -18,7 +18,7 @@ class PHPTRAVELS extends StatelessWidget {
         fontFamily: "inter"
       ),
       debugShowCheckedModeBanner: false,
-      home: const HomeScreen(),
+      home: const MainApp(),
     );
   }
 }
