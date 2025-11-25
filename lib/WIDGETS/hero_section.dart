@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:phptravels/PAGES/Flights.dart';
+import 'package:phptravels/PAGES/flights.dart';
+import 'package:phptravels/PAGES/hotels.dart';
+import 'package:phptravels/THEMES/app_theme.dart';
+import 'package:phptravels/l10n/app_localizations.dart';
 
 class HeroSection extends StatefulWidget {
   const HeroSection({super.key});
@@ -8,6 +11,7 @@ class HeroSection extends StatefulWidget {
   @override
   State<HeroSection> createState() => _HeroSectionState();
 }
+
 class _HeroSectionState extends State<HeroSection> {
   int _selectedIndex = 0;
 
@@ -36,6 +40,11 @@ class _HeroSectionState extends State<HeroSection> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const FlightsSearchPage()),
+      );
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HotelsSearchPage()),
       );
     }
   }
@@ -79,38 +88,39 @@ class _HeroCardSection extends StatelessWidget {
     required this.onCardTap,
   });
 
-@override
-Widget build(BuildContext context) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Expanded(  // ← ADD THIS
-          child: _HeroOptionCard(
-            icon: LucideIcons.plane,
-            title: 'Flights',
-            index: 0,
-            isLeftCard: true,
-            isSelected: selectedIndex == 0,
-            onTap: () => onCardTap(0),
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: _HeroOptionCard(
+              icon: LucideIcons.plane,
+              title: l10n.flights,
+              index: 0,
+              isLeftCard: true,
+              isSelected: selectedIndex == 0,
+              onTap: () => onCardTap(0),
+            ),
           ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(  
-          child: _HeroOptionCard(
-            icon: LucideIcons.building2,
-            title: 'Hotels',
-            index: 1,
-            isLeftCard: false,
-            isSelected: selectedIndex == 1,
-            onTap: () => onCardTap(1),
+          const SizedBox(width: 16),
+          Expanded(
+            child: _HeroOptionCard(
+              icon: LucideIcons.building2,
+              title: l10n.hotels,
+              index: 1,
+              isLeftCard: false,
+              isSelected: selectedIndex == 1,
+              onTap: () => onCardTap(1),
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 }
 
 class _HeroOptionCard extends StatelessWidget {
@@ -132,6 +142,8 @@ class _HeroOptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -147,9 +159,9 @@ class _HeroOptionCard extends StatelessWidget {
                   left: Radius.circular(10),
                   right: Radius.circular(0),
                 ),
-          color: Colors.white,
+          color: theme.colorScheme.surface,
           border: Border.all(
-            color: Colors.grey.shade200,
+            color: theme.dividerColor,
             width: 1,
           ),
           boxShadow: [
@@ -167,16 +179,14 @@ class _HeroOptionCard extends StatelessWidget {
             Icon(
               icon,
               size: 36,
-              color: const Color(0xFF2563EB),
+              color: AppColors.primaryBlue,
             ),
             const SizedBox(height: 8),
             Text(
               title,
-              style: TextStyle(
-                color: Colors.black87,
+              style: theme.textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w800,
                 fontSize: 15,
-                
               ),
               textAlign: TextAlign.center,
             ),

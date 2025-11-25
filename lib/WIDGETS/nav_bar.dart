@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:phptravels/THEMES/app_theme.dart';
+import 'package:phptravels/l10n/app_localizations.dart';
 
 class NavBar extends StatelessWidget {
   final int selectedIndex;
@@ -12,10 +14,11 @@ class NavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       height: 60,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.15),
@@ -28,16 +31,16 @@ class NavBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildNavItem("Home", Icons.home, 0),
-          _buildNavItem("Explore", Icons.explore, 1),
-          _buildNavItem("Stories", Icons.article, 2),
-          _buildNavItem("Account", Icons.person, 3),
+          _buildNavItem(context, l10n.home, Icons.home, 0),
+          _buildNavItem(context, l10n.explore, Icons.explore, 1),
+          _buildNavItem(context, l10n.stories, Icons.article, 2),
+          _buildNavItem(context, l10n.account, Icons.person, 3),
         ],
       ),
     );
   }
 
-  Widget _buildNavItem(String label, IconData icon, int index) {
+  Widget _buildNavItem(BuildContext context, String label, IconData icon, int index) {
     bool isSelected = selectedIndex == index;
     return GestureDetector(
       onTap: () {
@@ -48,7 +51,7 @@ class NavBar extends StatelessWidget {
         children: [
           Icon(
             _getOutlinedIcon(icon),
-            color: isSelected ? Colors.blue : Colors.grey,
+            color: isSelected ? AppColors.primaryBlue : Theme.of(context).textTheme.bodySmall?.color,
             size: 24,
           ),
           const SizedBox(height: 4),
@@ -56,7 +59,7 @@ class NavBar extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 12,
-              color: isSelected ? Colors.blue : Colors.grey,
+              color: isSelected ? AppColors.primaryBlue : Theme.of(context).textTheme.bodySmall?.color,
             ),
           ),
         ],
