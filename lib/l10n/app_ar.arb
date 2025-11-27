@@ -5,6 +5,8 @@
   "hotels": "الفنادق",
   "searchFlights": "بحث عن الرحلات",
   "from": "من",
+  "selectCheckInDate": "اختر تاريخ الوصول",
+  "selectCheckOutDate": "اختر تاريخ المغادرة",
   "to": "إلى",
   "departureDate": "تاريخ المغادرة",
   "returnDate": "تاريخ العودة",

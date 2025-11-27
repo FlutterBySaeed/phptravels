@@ -204,6 +204,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hotelsSearchTitle => 'Hotels Search';
 
   @override
+  String get selectCheckInDate => 'Select Check-in Date';
+
+  @override
+  String get selectCheckOutDate => 'Select Check-out Date';
+
+  @override
   String get needPlaceTonight => 'I need a place tonight!';
 
   @override

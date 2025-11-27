@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:phptravels/PAGES/flights.dart' show TripType, DestinationSearchPage, CustomDatePickerPage;
+import 'package:phptravels/PAGES/flights.dart' show DestinationSearchPage;
 import 'package:phptravels/THEMES/app_theme.dart';
 import 'package:phptravels/l10n/app_localizations.dart';
 
@@ -37,22 +37,21 @@ class _HotelsSearchPageState extends State<HotelsSearchPage> {
     );
   }
 
-  Future<void> _selectDates() async {
+  Future<void> _selectDates({bool fromCheckIn = true}) async {
     await Navigator.push(
       context,
       MaterialPageRoute(
         fullscreenDialog: true,
-        builder: (context) => CustomDatePickerPage(
-          isDeparture: true,
-          onDateSelected: (start, end) {
+        builder: (context) => HotelDatePickerPage(
+          isCheckIn: fromCheckIn,
+          onDateSelected: (checkIn, checkOut) {
             setState(() {
-              _checkInDate = start;
-              _checkOutDate = end ?? start?.add(const Duration(days: 1));
+              _checkInDate = checkIn;
+              _checkOutDate = checkOut ?? checkIn?.add(const Duration(days: 1));
             });
           },
-          tripType: TripType.roundTrip,
-          initialDepartureDate: _checkInDate,
-          initialReturnDate: _checkOutDate,
+          initialCheckInDate: _checkInDate,
+          initialCheckOutDate: _checkOutDate,
         ),
       ),
     );
@@ -130,7 +129,7 @@ class _HotelsSearchPageState extends State<HotelsSearchPage> {
                   checkOutLabel: l10n.checkOut,
                   checkInValue: _formatDate(l10n, _checkInDate),
                   checkOutValue: _formatDate(l10n, _checkOutDate),
-                  onTap: _selectDates,
+                  onTap: () => _selectDates(fromCheckIn: true),
                 ),
                 guestsChild: _CompactInfoTile(
                   icon: LucideIcons.doorOpen,
@@ -140,7 +139,7 @@ class _HotelsSearchPageState extends State<HotelsSearchPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: SizedBox(
@@ -148,7 +147,7 @@ class _HotelsSearchPageState extends State<HotelsSearchPage> {
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     backgroundColor: AppColors.primaryBlue,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                   ),
@@ -245,12 +244,24 @@ class _SearchCard extends StatelessWidget {
       child: Column(
         children: [
           destinationChild,
-          const Divider(height: 1),
+          const _FullHeightDivider(),
           dateChild,
-          const Divider(height: 1),
+          const _FullHeightDivider(),
           guestsChild,
         ],
       ),
+    );
+  }
+}
+
+class _FullHeightDivider extends StatelessWidget {
+  const _FullHeightDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 1,
+      color: Theme.of(context).dividerColor,
     );
   }
 }
@@ -320,14 +331,14 @@ class _CompactDateTile extends StatelessWidget {
     required this.onTap,
   });
 
-  @override
+ @override
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
           child: Row(
             children: [
               Icon(LucideIcons.calendar, size: 20, color: Theme.of(context).iconTheme.color),
@@ -348,9 +359,11 @@ class _CompactDateTile extends StatelessWidget {
                   ],
                 ),
               ),
+              // Fixed vertical divider - stretches to full height
               Container(
-                width: 1, 
-                height: 32, 
+                margin: const EdgeInsets.symmetric(vertical: 0), // Compensate for parent padding
+                width: 1,
+                height: 62, 
                 color: Theme.of(context).dividerColor,
               ),
               const SizedBox(width: 12),
@@ -375,6 +388,385 @@ class _CompactDateTile extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+}
+
+class HotelDatePickerPage extends StatefulWidget {
+  final bool isCheckIn;
+  final Function(DateTime?, DateTime?) onDateSelected;
+  final DateTime? initialCheckInDate;
+  final DateTime? initialCheckOutDate;
+
+  const HotelDatePickerPage({
+    super.key,
+    required this.isCheckIn,
+    required this.onDateSelected,
+    this.initialCheckInDate,
+    this.initialCheckOutDate,
+  });
+
+  @override
+  State<HotelDatePickerPage> createState() => _HotelDatePickerPageState();
+}
+
+class _HotelDatePickerPageState extends State<HotelDatePickerPage> {
+  late DateTime _checkInDate;
+  late DateTime? _checkOutDate;
+  late bool _selectingCheckIn;
+  final ScrollController _scrollController = ScrollController();
+  List<DateTime> _months = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _checkInDate = widget.initialCheckInDate ?? DateTime.now();
+    _checkOutDate = widget.initialCheckOutDate;
+    _selectingCheckIn = widget.isCheckIn;
+    _generateMonths();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToSelectedMonth();
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _generateMonths() {
+    final now = DateTime.now();
+    _months = List.generate(24, (index) {
+      return DateTime(now.year, now.month + index, 1);
+    });
+  }
+
+  void _scrollToSelectedMonth() {
+    DateTime targetDate;
+
+    if (!_selectingCheckIn && _checkOutDate != null) {
+      targetDate = _checkOutDate!;
+    } else {
+      targetDate = _checkInDate;
+    }
+
+    final targetMonthIndex = _months.indexWhere(
+      (month) => month.year == targetDate.year && month.month == targetDate.month,
+    );
+
+    if (targetMonthIndex != -1 && mounted) {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted) {
+          _scrollController.animateTo(
+            targetMonthIndex * 320.0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
+      });
+    }
+  }
+
+  List<DateTime> _getDaysInMonth(DateTime date) {
+    final first = DateTime(date.year, date.month, 1);
+    final last = DateTime(date.year, date.month + 1, 0);
+    final daysInMonth = last.day;
+    final firstWeekday = first.weekday;
+
+    List<DateTime> days = [];
+
+    for (int i = 1; i < firstWeekday; i++) {
+      days.add(DateTime(first.year, first.month, -(firstWeekday - i)));
+    }
+
+    for (int i = 1; i <= daysInMonth; i++) {
+      days.add(DateTime(first.year, first.month, i));
+    }
+
+    int totalCells = days.length > 35 ? 42 : 35;
+    int nextDay = 1;
+    while (days.length < totalCells) {
+      days.add(DateTime(first.year, first.month + 1, nextDay));
+      nextDay++;
+    }
+
+    return days;
+  }
+
+  void _onDateSelected(DateTime selectedDate) {
+    final today = DateTime.now();
+    final cleanToday = DateTime(today.year, today.month, today.day);
+    final cleanSelected = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+
+    if (cleanSelected.isBefore(cleanToday)) return;
+
+    if (_selectingCheckIn) {
+      setState(() {
+        _checkInDate = cleanSelected;
+
+        if (_checkOutDate != null && !_checkOutDate!.isAfter(_checkInDate)) {
+          _checkOutDate = null;
+        }
+      });
+
+      if (_checkOutDate == null) {
+        setState(() => _selectingCheckIn = false);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollToSelectedMonth();
+        });
+      } else {
+        widget.onDateSelected(_checkInDate, _checkOutDate);
+        Navigator.pop(context);
+      }
+    } else {
+      if (!cleanSelected.isAfter(_checkInDate)) return;
+
+      setState(() {
+        _checkOutDate = cleanSelected;
+      });
+
+      widget.onDateSelected(_checkInDate, _checkOutDate);
+      Navigator.pop(context);
+    }
+  }
+
+  bool _isSameDay(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
+  }
+
+  bool _isDateSelectable(DateTime day) {
+    final now = DateTime.now();
+    final cleanToday = DateTime(now.year, now.month, now.day);
+    final cleanDay = DateTime(day.year, day.month, day.day);
+    final DateTime? checkIn = _checkInDate;
+
+    if (cleanDay.isBefore(cleanToday)) return false;
+    if (_selectingCheckIn) return true;
+    if (checkIn == null) return false;
+
+    return cleanDay.isAfter(DateTime(checkIn.year, checkIn.month, checkIn.day));
+  }
+
+  bool _isDateInRange(DateTime day) {
+    final DateTime? checkIn = _checkInDate;
+    final DateTime? checkOut = _checkOutDate;
+    if (checkIn == null || checkOut == null) return false;
+
+    final d = DateTime(checkIn.year, checkIn.month, checkIn.day);
+    final r = DateTime(checkOut.year, checkOut.month, checkOut.day);
+    final current = DateTime(day.year, day.month, day.day);
+
+    return current.isAfter(d) && current.isBefore(r);
+  }
+
+  Widget _buildCalendar(BuildContext context, DateTime currentMonth) {
+    final days = _getDaysInMonth(currentMonth);
+    final localeName = Localizations.localeOf(context).toLanguageTag();
+    final monthLabel = DateFormat('MMMM yyyy', localeName).format(currentMonth);
+    final weekdayLabels = List.generate(
+      7,
+      (index) => DateFormat.E(localeName).format(DateTime.utc(2020, 1, 6 + index)),
+    );
+
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            border: Border(
+              bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1),
+            ),
+          ),
+          child: Center(
+            child: Text(
+              monthLabel,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: weekdayLabels
+                .map((day) => SizedBox(
+                      width: 40,
+                      child: Text(
+                        day,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ))
+                .toList(),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 7,
+              childAspectRatio: 1.1,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+            ),
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: days.length,
+            itemBuilder: (context, index) {
+              final day = days[index];
+              final isCurrentMonth = day.month == currentMonth.month;
+              final isSelectable = isCurrentMonth && _isDateSelectable(day);
+
+              final cleanDay = DateTime(day.year, day.month, day.day);
+              final cleanCheckIn = DateTime(_checkInDate.year, _checkInDate.month, _checkInDate.day);
+              final cleanCheckOut = _checkOutDate != null 
+                  ? DateTime(_checkOutDate!.year, _checkOutDate!.month, _checkOutDate!.day)
+                  : null;
+
+              final isCheckInSelected = _isSameDay(cleanDay, cleanCheckIn);
+              final isCheckOutSelected = cleanCheckOut != null && _isSameDay(cleanDay, cleanCheckOut);
+              final isSelected = isCheckInSelected || isCheckOutSelected;
+              final isInRange = _isDateInRange(cleanDay);
+
+              return GestureDetector(
+                onTap: isSelectable ? () => _onDateSelected(day) : null,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? AppColors.primaryBlue
+                        : isInRange
+                            ? AppColors.primaryBlue.withOpacity(0.1)
+                            : Colors.transparent,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Text(
+                      day.day.toString(),
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: isSelected
+                            ? AppColors.white
+                            : !isCurrentMonth
+                                ? Theme.of(context).textTheme.bodySmall?.color
+                                : !isSelectable
+                                    ? Theme.of(context).textTheme.bodySmall?.color
+                                    : Theme.of(context).textTheme.bodyMedium?.color,
+                        fontFamily: 'Inter',
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 24),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.close, color: Theme.of(context).iconTheme.color, size: 24),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          l10n.selectDates,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() => _selectingCheckIn = true);
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        _scrollToSelectedMonth();
+                      });
+                    },
+                    child: Column(
+                      children: [
+                        Text(
+                          l10n.checkIn.toUpperCase(),
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: _selectingCheckIn ? Theme.of(context).textTheme.bodyLarge?.color : Theme.of(context).textTheme.bodySmall?.color,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          height: 3,
+                          color: _selectingCheckIn ? AppColors.primaryBlue : Colors.transparent,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() => _selectingCheckIn = false);
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        _scrollToSelectedMonth();
+                      });
+                    },
+                    child: Column(
+                      children: [
+                        Text(
+                          l10n.checkOut.toUpperCase(),
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: !_selectingCheckIn ? Theme.of(context).textTheme.bodyLarge?.color : Theme.of(context).textTheme.bodySmall?.color,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          height: 3,
+                          color: !_selectingCheckIn ? AppColors.primaryBlue : Colors.transparent,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              itemCount: _months.length,
+              itemBuilder: (context, index) => _buildCalendar(context, _months[index]),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -474,12 +866,14 @@ class _HotelGuestRoomPickerBottomSheetState extends State<HotelGuestRoomPickerBo
                         children: [
                           TextButton.icon(
                             onPressed: _addRoom,
-                            icon: const Icon(Icons.add),
+                            icon: const Icon(Icons.add, color: Colors.black),
                             label: Text(
                               l10n.addRoom,
                               style: const TextStyle(
                                 decoration: TextDecoration.underline,
+                                decorationColor: Colors.black,
                                 fontWeight: FontWeight.w600,
+                                color: Colors.black,
                               ),
                             ),
                           ),
@@ -576,6 +970,7 @@ class _RoomEditor extends StatelessWidget {
                   style: const TextStyle(
                     color: Colors.red,
                     decoration: TextDecoration.underline,
+                    decorationColor: Colors.red,
                     fontWeight: FontWeight.w700,
                     fontSize: 13,
                   ),
@@ -669,14 +1064,10 @@ class _RoomEditor extends StatelessWidget {
         ),
         if (room.children > 0) ...[
           const SizedBox(height: 16),
+          // MODIFIED: Removed the decoration (border bottom) here as requested
           Container(
             width: double.infinity,
             padding: const EdgeInsets.only(bottom: 12),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: Colors.grey.shade300),
-              ),
-            ),
             child: Text(
               l10n.ageOfChildren,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
@@ -716,13 +1107,15 @@ class _CircleButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
+      // MODIFIED: Smaller size (28) and bolder border (1.5)
       child: Container(
-        width: 32,
-        height: 32,
+        width: 28,
+        height: 28,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: onTap == null ? Colors.grey.shade300 : Colors.grey.shade400,
+            width: 1.5,
+            color: onTap == null ? Colors.grey.shade300 : Colors.grey.shade500,
           ),
           color: onTap == null ? Colors.grey.shade100 : Colors.transparent,
         ),
@@ -751,9 +1144,12 @@ class _AgeDropdown extends StatelessWidget {
           bottom: BorderSide(color: Colors.grey.shade400),
         ),
       ),
+      // MODIFIED: Added menuMaxHeight to limit to ~4 items and isDense for smaller vertical footprint
       child: DropdownButton<int>(
         value: value,
         isExpanded: true,
+        isDense: true,
+        menuMaxHeight: 200, 
         underline: const SizedBox.shrink(),
         items: List.generate(
           18,

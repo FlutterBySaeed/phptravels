@@ -484,6 +484,18 @@ abstract class AppLocalizations {
   /// **'Hotels Search'**
   String get hotelsSearchTitle;
 
+  /// No description provided for @selectCheckInDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Check-in Date'**
+  String get selectCheckInDate;
+
+  /// No description provided for @selectCheckOutDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Check-out Date'**
+  String get selectCheckOutDate;
+
   /// No description provided for @needPlaceTonight.
   ///
   /// In en, this message translates to:

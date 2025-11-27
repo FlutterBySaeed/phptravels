@@ -2,47 +2,81 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AirportService {
-  
-  static const String _apiKey = '6ea602eb97mshc615bbce6ae965bp10985fjsn4bb364c35aff';
-  static const String _baseUrl = 'https://wft-geo-db.p.rapidapi.com/v1/geo/cities';
+  static const String _baseUrl = 'https://www.kayak.com/mvm/smartyv2/search';
 
-  static Future<List<Map<String, String>>> fetchCities(String query) async {
+  static Future<List<Map<String, dynamic>>> fetchAirports(String query) async {
     if (query.isEmpty) return [];
 
     try {
-      final uri = Uri.parse('$_baseUrl?namePrefix=$query&limit=10');
-      final response = await http.get(uri, headers: {
-        'X-RapidAPI-Key': _apiKey,
-        'X-RapidAPI-Host': 'wft-geo-db.p.rapidapi.com',
-      });
+      final uri = Uri.parse('$_baseUrl?f=j&s=airportonly&where=$query');
+
+      final response = await http.get(
+        uri,
+        headers: {
+          'User-Agent':
+              'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1',
+          'Accept': 'application/json, text/plain, */*',
+          'Accept-Language': 'en-US,en;q=0.9',
+          'Referer': 'https://www.kayak.com/flights',
+          'Origin': 'https://www.kayak.com',
+        },
+      );
 
       if (response.statusCode == 200) {
-        final jsonBody = json.decode(response.body);
-        final List data = jsonBody['data'];
+        final List<dynamic> jsonBody = json.decode(response.body);
 
-        return data.map<Map<String, String>>((city) {
-          final countryCode = (city['countryCode'] ?? '').toString().toLowerCase();
-          final cityName = city['name'] ?? '';
-          final countryName = city['country'] ?? '';
-          final flagUrl = countryCode.isNotEmpty
-              ? 'https://flagcdn.com/w40/$countryCode.png'
-              : '';
+        if (jsonBody.isEmpty) {
+          return [];
+        }
 
-          return {
-            'name': '$cityName, $countryName',
-            'city': cityName,
-            'country': countryName,
-            'flag': flagUrl,
-            'code': countryCode.toUpperCase(),
-          };
-        }).toList();
+        return jsonBody.map<Map<String, dynamic>>(_parseAirportData).toList();
       } else {
-        // print('🌐 API error: ${response.statusCode}, body: ${response.body}');
         return [];
       }
     } catch (e) {
-      // print('⚠️ City fetch error: $e');
       return [];
     }
+  }
+
+  static Map<String, dynamic> _parseAirportData(dynamic airport) {
+    // Extract airport name from entityKey (e.g., "place:Allama_Iqbal_International_Airport")
+    String airportName = '';
+    if (airport['entityKey'] != null) {
+      final entityKey = airport['entityKey'].toString();
+      if (entityKey.startsWith('place:')) {
+        airportName = entityKey
+            .substring(6) // Remove "place:" prefix
+            .replaceAll('_', ' '); // Replace underscores with spaces
+      }
+    }
+
+    // Fallback to other fields if entityKey doesn't work
+    if (airportName.isEmpty) {
+      airportName = airport['displayname'] ??
+          airport['airportname'] ??
+          airport['name'] ??
+          airport['cityname'] ??
+          '';
+    }
+
+    final cityName =
+        airport['cityonly'] ?? airport['cityname'] ?? airport['name'] ?? '';
+
+    final countryName = airport['country'] ?? '';
+
+    final airportCode =
+        airport['apicode'] ?? airport['ap'] ?? airport['id'] ?? '';
+
+    final countryCode = (airport['cc'] ?? '').toString().toLowerCase();
+
+    return {
+      'city': cityName,
+      'country': countryName,
+      'code': airportCode,
+      'countryCode': countryCode.toUpperCase(),
+      'displayName': '$cityName\n$countryName',
+      'isSelected': false,
+      'fullName': airportName,
+    };
   }
 }

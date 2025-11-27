@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:country_picker/country_picker.dart';
+import 'package:currency_picker/currency_picker.dart';
+
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:phptravels/providers/theme_provider.dart';
@@ -17,6 +20,9 @@ class AccountsPage extends StatefulWidget {
 }
 
 class _AccountsPageState extends State<AccountsPage> {
+  String _selectedCurrency = 'PKR';
+  String _selectedCountry = 'Pakistan';
+
   String _getLanguageDisplayName(BuildContext context, String code) {
     final l10n = AppLocalizations.of(context);
     switch (code) {
@@ -42,6 +48,52 @@ class _AccountsPageState extends State<AccountsPage> {
     }
   }
 
+  void _showCurrencyPicker(BuildContext context) {
+    showCurrencyPicker(
+      context: context,
+      showFlag: true,
+      showCurrencyName: true,
+      showCurrencyCode: true,
+      onSelect: (Currency currency) {
+        setState(() {
+          _selectedCurrency = currency.code;
+        });
+      },
+      theme: CurrencyPickerThemeData(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        bottomSheetHeight: MediaQuery.of(context).size.height * 0.8,
+      ),
+    );
+  }
+
+  void _showCountryPicker(BuildContext context) {
+    showCountryPicker(
+      context: context,
+      showPhoneCode: false,
+      onSelect: (Country country) {
+        setState(() {
+          _selectedCountry = country.name;
+        });
+      },
+      countryListTheme: CountryListThemeData(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+        bottomSheetHeight: MediaQuery.of(context).size.height * 0.8,
+        inputDecoration: InputDecoration(
+          prefixIcon: const Icon(Icons.search),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          filled: true,
+          fillColor: Theme.of(context).cardColor,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,8 +107,8 @@ class _AccountsPageState extends State<AccountsPage> {
               decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
+                  topLeft: Radius.circular(15),
+                  topRight: Radius.circular(15),
                 ),
               ),
               child: Column(
@@ -82,31 +134,50 @@ class _AccountsPageState extends State<AccountsPage> {
   }
 
   Widget _buildLoginPrompt() {
-    return Container(
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [AppColors.primaryBlue, AppColors.darkBlue],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+  return Container(
+    width: double.infinity,
+    decoration: const BoxDecoration(
+      gradient: LinearGradient(
+        colors: [AppColors.primaryBlue, AppColors.darkBlue],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
       ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: -35,
-            top: 10,
-            bottom: 0,
-            child: Center(
-              child: Icon(
-                LucideIcons.plane,
-                size: 115,
-                color: AppColors.white.withOpacity(0.1),
-              ),
+    ),
+    child: Stack(
+      children: [
+        Positioned(
+          right: -35,
+          top: 10,
+          bottom: 0,
+          child: Center(
+            child: Icon(
+              LucideIcons.plane,
+              size: 115,
+              color: AppColors.white.withOpacity(0.1),
             ),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
+        ),
+        // Inner rounded white container
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+            child: Container(
+              height: 30, // Adjust height as needed
+              color: Theme.of(context).cardColor,
+            ),
+          ),
+        ),
+        // Your content positioned above the inner rounded part
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 30), // Match the height above
             child: Padding(
               padding: const EdgeInsets.only(
                 left: 16,
@@ -117,6 +188,7 @@ class _AccountsPageState extends State<AccountsPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // ... your existing content
                   Container(
                     width: 45,
                     height: 45,
@@ -179,10 +251,11 @@ class _AccountsPageState extends State<AccountsPage> {
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 
   Widget _buildDivider(BuildContext context) {
     return Padding(
@@ -374,18 +447,20 @@ class _AccountsPageState extends State<AccountsPage> {
                 onTap: _showLanguageSettings,
               ),
               const SizedBox(height: 2),
-              _buildSettingRow(
+              _buildSettingRowWithAction(
                 context,
                 LucideIcons.wallet,
                 l10n.currency,
-                'PKR',
+                _selectedCurrency,
+                onTap: () => _showCurrencyPicker(context),
               ),
               const SizedBox(height: 2),
-              _buildSettingRow(
+              _buildSettingRowWithAction(
                 context,
                 LucideIcons.globe,
                 l10n.region,
-                'Pakistan',
+                _selectedCountry,
+                onTap: () => _showCountryPicker(context),
               ),
               const SizedBox(height: 2),
               _buildSettingRowWithAction(

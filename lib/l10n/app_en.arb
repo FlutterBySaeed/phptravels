@@ -64,6 +64,8 @@
   "showMore": "Show more",
   "showLess": "Show less",
   "hotelsSearchTitle": "Hotels Search",
+  "selectCheckInDate": "Select Check-in Date",
+  "selectCheckOutDate": "Select Check-out Date",
   "needPlaceTonight": "I need a place tonight!",
   "destination": "Destination",
   "checkIn": "Check in",

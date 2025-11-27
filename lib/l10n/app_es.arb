@@ -24,6 +24,8 @@
   "oneWay": "Solo Ida",
   "roundTrip": "Ida y Vuelta",
   "multiCity": "Multi Ciudad",
+  "selectCheckInDate": "Seleccionar Fecha de Llegada",
+  "selectCheckOutDate": "Seleccionar Fecha de Salida",
   "paymentTypes": "Tipos de Pago",
   "paymentMethods": "Métodos de pago",
   "paymentMethodsInfo": "Al seleccionar uno o más (máx. 10) tipos de pago,\nlos precios en PHPTRAVELS incluirán las tarifas mínimas\naplicables. Ten en cuenta que no todos los proveedores\naceptan todos los tipos de pago.",

@@ -5,12 +5,18 @@ import 'package:phptravels/providers/theme_provider.dart';
 import 'package:phptravels/providers/language_provider.dart';
 import 'package:phptravels/THEMES/app_theme.dart';
 import 'package:phptravels/l10n/app_localizations.dart'; // Import your generated localizations
+import 'package:phptravels/providers/currency_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   final languageProvider = LanguageProvider();
   await languageProvider.init();
+  
+
+  final currencyProvider = CurrencyProvider();
+  await currencyProvider.init();
+
   
   runApp(
     MultiProvider(
@@ -21,6 +27,9 @@ void main() async {
         ChangeNotifierProvider(
           create: (context) => languageProvider,
         ),
+        ChangeNotifierProvider(
+          create:(context)=> currencyProvider,
+        )
       ],
       child: const PHPTRAVELS(),
     ),
@@ -43,8 +52,27 @@ class PHPTRAVELS extends StatelessWidget {
           
           // Localization Configuration
           localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
+          supportedLocales: languageProvider.supportedLocalesList,
           locale: languageProvider.currentLocale,
+          localeResolutionCallback: (locale, supportedLocales) {
+            // Check if the current device locale is supported
+            for (var supportedLocale in supportedLocales) {
+              if (supportedLocale.languageCode == locale?.languageCode) {
+                // If we have a matching language code, use it
+                // If we also have a matching country code, use that exact locale
+                if (supportedLocale.countryCode == locale?.countryCode) {
+                  return supportedLocale;
+                }
+                // Otherwise, use the first locale for this language
+                return supportedLocales.firstWhere(
+                  (l) => l.languageCode == locale?.languageCode,
+                  orElse: () => supportedLocale,
+                );
+              }
+            }
+            // If the locale is not supported, use the first one from the supported locales
+            return supportedLocales.first;
+          },
           
           home: const MainApp(),
         );
