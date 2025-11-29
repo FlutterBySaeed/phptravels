@@ -11,10 +11,11 @@ class SearchHistoryService {
     try {
       final prefs = await SharedPreferences.getInstance();
       final List<String>? existingData = prefs.getStringList(_storageKey);
-      
+
       List<Map<String, dynamic>> history = existingData
-          ?.map((item) => jsonDecode(item) as Map<String, dynamic>)
-          .toList() ?? [];
+              ?.map((item) => jsonDecode(item) as Map<String, dynamic>)
+              .toList() ??
+          [];
 
       // Add new search to the beginning
       history.insert(0, search.toJson());
@@ -38,7 +39,7 @@ class SearchHistoryService {
     try {
       final prefs = await SharedPreferences.getInstance();
       final List<String>? data = prefs.getStringList(_storageKey);
-      
+
       if (data == null || data.isEmpty) return [];
 
       return data
@@ -55,7 +56,7 @@ class SearchHistoryService {
     try {
       final prefs = await SharedPreferences.getInstance();
       final List<String>? existingData = prefs.getStringList(_storageKey);
-      
+
       if (existingData == null) return;
 
       List<Map<String, dynamic>> history = existingData
@@ -86,7 +87,18 @@ class SearchHistoryService {
       List<Map<String, dynamic>> history) {
     final seen = <String>{};
     return history.where((item) {
-      final key = '${item['from']}_${item['to']}_${item['departureDate']}';
+      String key;
+      if (item['tripType'] == 'multiCity' && item['segments'] != null) {
+        // Create unique key for multi-city based on all segments
+        final segments = item['segments'] as List;
+        final segmentsKey = segments
+            .map((s) => '${s['from']}_${s['to']}_${s['date']}')
+            .join('|');
+        key = 'multiCity_$segmentsKey';
+      } else {
+        key = '${item['from']}_${item['to']}_${item['departureDate']}';
+      }
+
       if (seen.contains(key)) return false;
       seen.add(key);
       return true;

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:phptravels/PAGES/flights.dart' show DestinationSearchPage;
+import 'package:phptravels/PAGES/hotel_destination_search_page.dart';
+import 'package:phptravels/PAGES/hotels_results_page.dart';
 import 'package:phptravels/THEMES/app_theme.dart';
 import 'package:phptravels/l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:phptravels/providers/search_provider.dart';
 
 class HotelsSearchPage extends StatefulWidget {
   const HotelsSearchPage({super.key});
@@ -13,10 +16,26 @@ class HotelsSearchPage extends StatefulWidget {
 }
 
 class _HotelsSearchPageState extends State<HotelsSearchPage> {
-  final TextEditingController _destinationController = TextEditingController(text: 'Karachi, Pakistan');
+  final TextEditingController _destinationController =
+      TextEditingController(text: 'Karachi, Pakistan');
   DateTime? _checkInDate = DateTime.now();
   DateTime? _checkOutDate = DateTime.now().add(const Duration(days: 3));
   final List<HotelRoom> _rooms = [HotelRoom()];
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize with provider value (hotel format: City, Country)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final searchProvider =
+          Provider.of<SearchProvider>(context, listen: false);
+      if (searchProvider.hotelDestination.isNotEmpty) {
+        setState(() {
+          _destinationController.text = searchProvider.hotelDestination;
+        });
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -25,13 +44,35 @@ class _HotelsSearchPageState extends State<HotelsSearchPage> {
   }
 
   Future<void> _selectDestination() async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DestinationSearchPage(
-          onDestinationSelected: (destination) {
-            setState(() => _destinationController.text = destination);
-          },
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.95,
+        minChildSize: 0.5,
+        maxChildSize: 0.98,
+        builder: (_, controller) => Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(20),
+            ),
+          ),
+          child: HotelDestinationSearchPage(
+            onDestinationSelected: (city, country) {
+              // For hotels, use "City, Country" format
+              final hotelFormat = city.isNotEmpty && country.isNotEmpty
+                  ? '$city, $country'
+                  : city;
+              setState(() => _destinationController.text = hotelFormat);
+              // Update provider with formatted destination for flights
+              final flightFormat =
+                  '$city (${city.substring(0, 3).toUpperCase()})';
+              Provider.of<SearchProvider>(context, listen: false)
+                  .setDestination(flightFormat, city: city, country: country);
+            },
+          ),
         ),
       ),
     );
@@ -60,10 +101,22 @@ class _HotelsSearchPageState extends State<HotelsSearchPage> {
   Future<void> _editGuestsAndRooms() async {
     final updatedRooms = await showModalBottomSheet<List<HotelRoom>>(
       context: context,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
-      builder: (context) => HotelGuestRoomPickerBottomSheet(initialRooms: _rooms),
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.8,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        builder: (_, controller) => Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(20),
+            ),
+          ),
+          child: HotelGuestRoomPickerBottomSheet(initialRooms: _rooms),
+        ),
+      ),
     );
 
     if (updatedRooms != null) {
@@ -82,7 +135,8 @@ class _HotelsSearchPageState extends State<HotelsSearchPage> {
   }
 
   String _guestSummary(AppLocalizations l10n) {
-    final totalGuests = _rooms.fold<int>(0, (sum, room) => sum + room.totalGuests);
+    final totalGuests =
+        _rooms.fold<int>(0, (sum, room) => sum + room.totalGuests);
     final roomCount = _rooms.length;
     final guestLabel = totalGuests == 1 ? l10n.guest : l10n.guests;
     final roomLabel = roomCount == 1 ? l10n.room : l10n.rooms;
@@ -98,7 +152,8 @@ class _HotelsSearchPageState extends State<HotelsSearchPage> {
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).iconTheme.color),
+          icon:
+              Icon(Icons.arrow_back, color: Theme.of(context).iconTheme.color),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -111,10 +166,10 @@ class _HotelsSearchPageState extends State<HotelsSearchPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 1),
               child: _HighlightBanner(text: l10n.needPlaceTonight),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 12),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: _SearchCard(
@@ -145,11 +200,28 @@ class _HotelsSearchPageState extends State<HotelsSearchPage> {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    if (_checkInDate != null && _checkOutDate != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HotelsResultsPage(
+                            location: _destinationController.text,
+                            checkInDate: _checkInDate!,
+                            checkOutDate: _checkOutDate!,
+                            rooms: _rooms.length,
+                            guests: _rooms.fold<int>(
+                                0, (sum, room) => sum + room.totalGuests),
+                          ),
+                        ),
+                      );
+                    }
+                  },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     backgroundColor: AppColors.primaryBlue,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24)),
                   ),
                   child: Text(
                     l10n.searchHotels,
@@ -199,7 +271,7 @@ class _HighlightBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       margin: EdgeInsets.zero,
       color: AppColors.primaryBlue.withOpacity(0.15),
       child: Row(
@@ -295,14 +367,18 @@ class _CompactInfoTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 12)),
+                    Text(title,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.copyWith(fontSize: 12)),
                     const SizedBox(height: 2),
                     Text(
                       value,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
                     ),
                   ],
                 ),
@@ -331,7 +407,7 @@ class _CompactDateTile extends StatelessWidget {
     required this.onTap,
   });
 
- @override
+  @override
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
@@ -341,29 +417,35 @@ class _CompactDateTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
           child: Row(
             children: [
-              Icon(LucideIcons.calendar, size: 20, color: Theme.of(context).iconTheme.color),
+              Icon(LucideIcons.calendar,
+                  size: 20, color: Theme.of(context).iconTheme.color),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(checkInLabel, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 12)),
+                    Text(checkInLabel,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.copyWith(fontSize: 12)),
                     const SizedBox(height: 2),
                     Text(
                       checkInValue,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
                     ),
                   ],
                 ),
               ),
               // Fixed vertical divider - stretches to full height
               Container(
-                margin: const EdgeInsets.symmetric(vertical: 0), // Compensate for parent padding
+                margin: const EdgeInsets.symmetric(
+                    vertical: 0), // Compensate for parent padding
                 width: 1,
-                height: 62, 
+                height: 62,
                 color: Theme.of(context).dividerColor,
               ),
               const SizedBox(width: 12),
@@ -371,14 +453,18 @@ class _CompactDateTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(checkOutLabel, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 12)),
+                    Text(checkOutLabel,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.copyWith(fontSize: 12)),
                     const SizedBox(height: 2),
                     Text(
                       checkOutValue,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
                     ),
                   ],
                 ),
@@ -391,7 +477,6 @@ class _CompactDateTile extends StatelessWidget {
       ),
     );
   }
-
 }
 
 class HotelDatePickerPage extends StatefulWidget {
@@ -454,7 +539,8 @@ class _HotelDatePickerPageState extends State<HotelDatePickerPage> {
     }
 
     final targetMonthIndex = _months.indexWhere(
-      (month) => month.year == targetDate.year && month.month == targetDate.month,
+      (month) =>
+          month.year == targetDate.year && month.month == targetDate.month,
     );
 
     if (targetMonthIndex != -1 && mounted) {
@@ -499,7 +585,8 @@ class _HotelDatePickerPageState extends State<HotelDatePickerPage> {
   void _onDateSelected(DateTime selectedDate) {
     final today = DateTime.now();
     final cleanToday = DateTime(today.year, today.month, today.day);
-    final cleanSelected = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+    final cleanSelected =
+        DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
 
     if (cleanSelected.isBefore(cleanToday)) return;
 
@@ -543,19 +630,18 @@ class _HotelDatePickerPageState extends State<HotelDatePickerPage> {
     final now = DateTime.now();
     final cleanToday = DateTime(now.year, now.month, now.day);
     final cleanDay = DateTime(day.year, day.month, day.day);
-    final DateTime? checkIn = _checkInDate;
+    final DateTime checkIn = _checkInDate;
 
     if (cleanDay.isBefore(cleanToday)) return false;
     if (_selectingCheckIn) return true;
-    if (checkIn == null) return false;
 
     return cleanDay.isAfter(DateTime(checkIn.year, checkIn.month, checkIn.day));
   }
 
   bool _isDateInRange(DateTime day) {
-    final DateTime? checkIn = _checkInDate;
+    final DateTime checkIn = _checkInDate;
     final DateTime? checkOut = _checkOutDate;
-    if (checkIn == null || checkOut == null) return false;
+    if (checkOut == null) return false;
 
     final d = DateTime(checkIn.year, checkIn.month, checkIn.day);
     final r = DateTime(checkOut.year, checkOut.month, checkOut.day);
@@ -570,7 +656,8 @@ class _HotelDatePickerPageState extends State<HotelDatePickerPage> {
     final monthLabel = DateFormat('MMMM yyyy', localeName).format(currentMonth);
     final weekdayLabels = List.generate(
       7,
-      (index) => DateFormat.E(localeName).format(DateTime.utc(2020, 1, 6 + index)),
+      (index) =>
+          DateFormat.E(localeName).format(DateTime.utc(2020, 1, 6 + index)),
     );
 
     return Column(
@@ -580,15 +667,16 @@ class _HotelDatePickerPageState extends State<HotelDatePickerPage> {
           decoration: BoxDecoration(
             color: Theme.of(context).cardColor,
             border: Border(
-              bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1),
+              bottom:
+                  BorderSide(color: Theme.of(context).dividerColor, width: 1),
             ),
           ),
           child: Center(
             child: Text(
               monthLabel,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+                    fontWeight: FontWeight.w600,
+                  ),
             ),
           ),
         ),
@@ -604,8 +692,8 @@ class _HotelDatePickerPageState extends State<HotelDatePickerPage> {
                         day,
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                              fontWeight: FontWeight.w600,
+                            ),
                       ),
                     ))
                 .toList(),
@@ -630,13 +718,16 @@ class _HotelDatePickerPageState extends State<HotelDatePickerPage> {
               final isSelectable = isCurrentMonth && _isDateSelectable(day);
 
               final cleanDay = DateTime(day.year, day.month, day.day);
-              final cleanCheckIn = DateTime(_checkInDate.year, _checkInDate.month, _checkInDate.day);
-              final cleanCheckOut = _checkOutDate != null 
-                  ? DateTime(_checkOutDate!.year, _checkOutDate!.month, _checkOutDate!.day)
+              final cleanCheckIn = DateTime(
+                  _checkInDate.year, _checkInDate.month, _checkInDate.day);
+              final cleanCheckOut = _checkOutDate != null
+                  ? DateTime(_checkOutDate!.year, _checkOutDate!.month,
+                      _checkOutDate!.day)
                   : null;
 
               final isCheckInSelected = _isSameDay(cleanDay, cleanCheckIn);
-              final isCheckOutSelected = cleanCheckOut != null && _isSameDay(cleanDay, cleanCheckOut);
+              final isCheckOutSelected =
+                  cleanCheckOut != null && _isSameDay(cleanDay, cleanCheckOut);
               final isSelected = isCheckInSelected || isCheckOutSelected;
               final isInRange = _isDateInRange(cleanDay);
 
@@ -662,8 +753,14 @@ class _HotelDatePickerPageState extends State<HotelDatePickerPage> {
                             : !isCurrentMonth
                                 ? Theme.of(context).textTheme.bodySmall?.color
                                 : !isSelectable
-                                    ? Theme.of(context).textTheme.bodySmall?.color
-                                    : Theme.of(context).textTheme.bodyMedium?.color,
+                                    ? Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.color
+                                    : Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.color,
                         fontFamily: 'Inter',
                       ),
                     ),
@@ -681,21 +778,22 @@ class _HotelDatePickerPageState extends State<HotelDatePickerPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.close, color: Theme.of(context).iconTheme.color, size: 24),
+          icon: Icon(Icons.close,
+              color: Theme.of(context).iconTheme.color, size: 24),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           l10n.selectDates,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+                fontWeight: FontWeight.w600,
+              ),
         ),
       ),
       body: Column(
@@ -716,15 +814,26 @@ class _HotelDatePickerPageState extends State<HotelDatePickerPage> {
                       children: [
                         Text(
                           l10n.checkIn.toUpperCase(),
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: _selectingCheckIn ? Theme.of(context).textTheme.bodyLarge?.color : Theme.of(context).textTheme.bodySmall?.color,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: _selectingCheckIn
+                                        ? Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color
+                                        : Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.color,
+                                  ),
                         ),
                         const SizedBox(height: 8),
                         Container(
                           height: 3,
-                          color: _selectingCheckIn ? AppColors.primaryBlue : Colors.transparent,
+                          color: _selectingCheckIn
+                              ? AppColors.primaryBlue
+                              : Colors.transparent,
                         ),
                       ],
                     ),
@@ -742,15 +851,26 @@ class _HotelDatePickerPageState extends State<HotelDatePickerPage> {
                       children: [
                         Text(
                           l10n.checkOut.toUpperCase(),
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: !_selectingCheckIn ? Theme.of(context).textTheme.bodyLarge?.color : Theme.of(context).textTheme.bodySmall?.color,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: !_selectingCheckIn
+                                        ? Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color
+                                        : Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.color,
+                                  ),
                         ),
                         const SizedBox(height: 8),
                         Container(
                           height: 3,
-                          color: !_selectingCheckIn ? AppColors.primaryBlue : Colors.transparent,
+                          color: !_selectingCheckIn
+                              ? AppColors.primaryBlue
+                              : Colors.transparent,
                         ),
                       ],
                     ),
@@ -763,7 +883,8 @@ class _HotelDatePickerPageState extends State<HotelDatePickerPage> {
             child: ListView.builder(
               controller: _scrollController,
               itemCount: _months.length,
-              itemBuilder: (context, index) => _buildCalendar(context, _months[index]),
+              itemBuilder: (context, index) =>
+                  _buildCalendar(context, _months[index]),
             ),
           ),
         ],
@@ -775,13 +896,16 @@ class _HotelDatePickerPageState extends State<HotelDatePickerPage> {
 class HotelGuestRoomPickerBottomSheet extends StatefulWidget {
   final List<HotelRoom> initialRooms;
 
-  const HotelGuestRoomPickerBottomSheet({super.key, required this.initialRooms});
+  const HotelGuestRoomPickerBottomSheet(
+      {super.key, required this.initialRooms});
 
   @override
-  State<HotelGuestRoomPickerBottomSheet> createState() => _HotelGuestRoomPickerBottomSheetState();
+  State<HotelGuestRoomPickerBottomSheet> createState() =>
+      _HotelGuestRoomPickerBottomSheetState();
 }
 
-class _HotelGuestRoomPickerBottomSheetState extends State<HotelGuestRoomPickerBottomSheet> {
+class _HotelGuestRoomPickerBottomSheetState
+    extends State<HotelGuestRoomPickerBottomSheet> {
   late List<HotelRoom> _rooms;
 
   @override
@@ -832,61 +956,64 @@ class _HotelGuestRoomPickerBottomSheetState extends State<HotelGuestRoomPickerBo
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final height = MediaQuery.of(context).size.height * 0.8;
     return SafeArea(
-      child: SizedBox(
-        height: height,
-        child: Column(
-          children: [
-            _BottomSheetHeader(
-              title: l10n.guestsAndRooms,
-              onClose: () => Navigator.pop(context),
-              onApply: () => Navigator.pop(context, _rooms.map((room) => room.copy()).toList()),
-            ),
-            const Divider(height: 1),
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                itemCount: _rooms.length + 1,
-                itemBuilder: (context, index) {
-                  if (index < _rooms.length) {
-                    return _RoomEditor(
-                      room: _rooms[index],
-                      index: index,
-                      onAdultsChanged: (value) => _updateAdults(index, value),
-                      onChildrenChanged: (value) => _updateChildren(index, value),
-                      onChildAgeChanged: (childIndex, age) => _updateChildAge(index, childIndex, age),
-                      onRemoveRoom: () => _removeRoom(index),
-                    );
-                  } else {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton.icon(
-                            onPressed: _addRoom,
-                            icon: const Icon(Icons.add, color: Colors.black),
-                            label: Text(
-                              l10n.addRoom,
-                              style: const TextStyle(
-                                decoration: TextDecoration.underline,
-                                decorationColor: Colors.black,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
-                              ),
+      child: Column(
+        children: [
+          _BottomSheetHeader(
+            title: l10n.guestsAndRooms,
+            onClose: () => Navigator.pop(context),
+            onApply: () => Navigator.pop(
+                context, _rooms.map((room) => room.copy()).toList()),
+          ),
+          const Divider(height: 1),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              itemCount: _rooms.length + 1,
+              itemBuilder: (context, index) {
+                if (index < _rooms.length) {
+                  return _RoomEditor(
+                    room: _rooms[index],
+                    index: index,
+                    onAdultsChanged: (value) => _updateAdults(index, value),
+                    onChildrenChanged: (value) => _updateChildren(index, value),
+                    onChildAgeChanged: (childIndex, age) =>
+                        _updateChildAge(index, childIndex, age),
+                    onRemoveRoom: () => _removeRoom(index),
+                  );
+                } else {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: _addRoom,
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(0, 0),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          child: Text(
+                            l10n.addRoom,
+                            style: const TextStyle(
+                              decoration: TextDecoration.underline,
+                              decorationColor: Colors.black,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.black,
+                              fontSize: 13,
                             ),
                           ),
-                        ],
-                      ),
-                    );
-                  }
-                },
-              ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
             ),
-            const SizedBox(height: 16),
-          ],
-        ),
+          ),
+          const SizedBox(height: 16),
+        ],
       ),
     );
   }
@@ -913,7 +1040,10 @@ class _BottomSheetHeader extends StatelessWidget {
           IconButton(onPressed: onClose, icon: const Icon(Icons.close)),
           Text(
             title,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium
+                ?.copyWith(fontWeight: FontWeight.w600),
           ),
           IconButton(
             onPressed: onApply,
@@ -946,7 +1076,7 @@ class _RoomEditor extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final canRemove = index > 0;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -954,7 +1084,10 @@ class _RoomEditor extends StatelessWidget {
           children: [
             Text(
               '${l10n.room} ${index + 1}',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(width: 8),
             if (canRemove)
@@ -971,7 +1104,7 @@ class _RoomEditor extends StatelessWidget {
                     color: Colors.red,
                     decoration: TextDecoration.underline,
                     decorationColor: Colors.red,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w800,
                     fontSize: 13,
                   ),
                 ),
@@ -989,7 +1122,10 @@ class _RoomEditor extends StatelessWidget {
                 children: [
                   Text(
                     l10n.adults,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.w600),
                   ),
                   Text(
                     '> 17 ${l10n.years}',
@@ -1002,7 +1138,9 @@ class _RoomEditor extends StatelessWidget {
               children: [
                 _CircleButton(
                   icon: Icons.remove,
-                  onTap: room.adults > 1 ? () => onAdultsChanged(room.adults - 1) : null,
+                  onTap: room.adults > 1
+                      ? () => onAdultsChanged(room.adults - 1)
+                      : null,
                 ),
                 SizedBox(
                   width: 36,
@@ -1014,7 +1152,9 @@ class _RoomEditor extends StatelessWidget {
                 ),
                 _CircleButton(
                   icon: Icons.add,
-                  onTap: room.adults < 6 ? () => onAdultsChanged(room.adults + 1) : null,
+                  onTap: room.adults < 6
+                      ? () => onAdultsChanged(room.adults + 1)
+                      : null,
                 ),
               ],
             ),
@@ -1031,7 +1171,10 @@ class _RoomEditor extends StatelessWidget {
                 children: [
                   Text(
                     l10n.children,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.w600),
                   ),
                   Text(
                     '≤ 17 ${l10n.years}',
@@ -1044,7 +1187,9 @@ class _RoomEditor extends StatelessWidget {
               children: [
                 _CircleButton(
                   icon: Icons.remove,
-                  onTap: room.children > 0 ? () => onChildrenChanged(room.children - 1) : null,
+                  onTap: room.children > 0
+                      ? () => onChildrenChanged(room.children - 1)
+                      : null,
                 ),
                 SizedBox(
                   width: 36,
@@ -1056,7 +1201,9 @@ class _RoomEditor extends StatelessWidget {
                 ),
                 _CircleButton(
                   icon: Icons.add,
-                  onTap: room.children < 6 ? () => onChildrenChanged(room.children + 1) : null,
+                  onTap: room.children < 6
+                      ? () => onChildrenChanged(room.children + 1)
+                      : null,
                 ),
               ],
             ),
@@ -1070,7 +1217,10 @@ class _RoomEditor extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 12),
             child: Text(
               l10n.ageOfChildren,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall
+                  ?.copyWith(color: Colors.grey.shade600),
             ),
           ),
           const SizedBox(height: 12),
@@ -1104,25 +1254,30 @@ class _CircleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    final isEnabled = onTap != null;
+    return GestureDetector(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
-      // MODIFIED: Smaller size (28) and bolder border (1.5)
       child: Container(
-        width: 28,
-        height: 28,
+        width: 24,
+        height: 24,
+        alignment: Alignment.center,
         decoration: BoxDecoration(
+          color: Colors.transparent,
           shape: BoxShape.circle,
           border: Border.all(
-            width: 1.5,
-            color: onTap == null ? Colors.grey.shade300 : Colors.grey.shade500,
+            color: isEnabled
+                ? Theme.of(context).iconTheme.color!
+                : Theme.of(context).dividerColor,
+            width: 2,
           ),
-          color: onTap == null ? Colors.grey.shade100 : Colors.transparent,
         ),
         child: Icon(
           icon,
-          size: 16,
-          color: onTap == null ? Colors.grey.shade400 : Colors.black87,
+          size: 18,
+          color: isEnabled
+              ? Theme.of(context).iconTheme.color
+              : Theme.of(context).dividerColor,
+          weight: 2,
         ),
       ),
     );
@@ -1149,7 +1304,7 @@ class _AgeDropdown extends StatelessWidget {
         value: value,
         isExpanded: true,
         isDense: true,
-        menuMaxHeight: 200, 
+        menuMaxHeight: 200,
         underline: const SizedBox.shrink(),
         items: List.generate(
           18,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  
   static const Color primaryBlue = Color(0xFF2563EB);
   static const Color darkBlue = Color(0xFF1D4ED8);
   static const Color lightBlue = Color(0xFFE0F2FE);
@@ -17,11 +16,14 @@ class AppColors {
   static const Color darkBg = Color.fromARGB(255, 0, 0, 0);
   static const Color darkSurfaceHigh = Color(0xFF2A2A2A);
   static const Color darkSurface = Color(0xFF333333);
-  static const Color darkTextPrimary = Color(0xFFFFFFFF); // White for primary text
-  static const Color darkTextSecondary = Color(0xFFA1A1AA); // Light gray for secondary text
+  static const Color darkTextPrimary =
+      Color(0xFFFFFFFF); // White for primary text
+  static const Color darkTextSecondary =
+      Color(0xFFA1A1AA); // Light gray for secondary text
   static const Color darkBorder = Color(0xFF3F3F46);
   static const Color darkError = Color(0xFFEF4444);
 }
+
 class AppTextStyles {
   static const TextStyle title = TextStyle(
     color: AppColors.textPrimary,
@@ -74,12 +76,10 @@ class AppThemes {
         primary: AppColors.primaryBlue,
         secondary: AppColors.darkBlue,
         surface: AppColors.white,
-        background: AppColors.background,
         error: Color(0xFFDC2626),
         onPrimary: AppColors.white,
         onSecondary: AppColors.white,
         onSurface: AppColors.textPrimary,
-        onBackground: AppColors.textPrimary,
       ),
       textTheme: const TextTheme(
         displayLarge: TextStyle(
@@ -192,12 +192,10 @@ class AppThemes {
         primary: AppColors.primaryBlue,
         secondary: AppColors.darkBlue,
         surface: AppColors.darkSurface,
-        background: AppColors.darkBg,
         error: AppColors.darkError,
         onPrimary: AppColors.white,
         onSecondary: AppColors.white,
         onSurface: AppColors.darkTextPrimary,
-        onBackground: AppColors.darkTextPrimary,
       ),
       textTheme: const TextTheme(
         displayLarge: TextStyle(
@@ -290,7 +288,7 @@ class AppThemes {
         ),
       ),
       dividerTheme: const DividerThemeData(
-        color: AppColors.darkBorder, 
+        color: AppColors.darkBorder,
         thickness: 1,
         space: 0,
       ),

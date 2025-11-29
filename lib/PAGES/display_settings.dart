@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:phptravels/providers/theme_provider.dart';
-import 'package:phptravels/THEMES/app_theme.dart'; 
+import 'package:phptravels/THEMES/app_theme.dart';
 import 'package:phptravels/l10n/app_localizations.dart';
 
 class DisplaySettingsSheet extends StatelessWidget {
@@ -39,7 +39,7 @@ class DisplaySettingsSheet extends StatelessWidget {
                         isSelected:
                             themeProvider.themeMode == AppThemeMode.system,
                         onTap: () => _changeThemeAndRestart(
-                          context, 
+                          context,
                           AppThemeMode.system,
                           themeProvider,
                         ),
@@ -53,7 +53,7 @@ class DisplaySettingsSheet extends StatelessWidget {
                         isSelected:
                             themeProvider.themeMode == AppThemeMode.light,
                         onTap: () => _changeThemeAndRestart(
-                          context, 
+                          context,
                           AppThemeMode.light,
                           themeProvider,
                         ),
@@ -67,7 +67,7 @@ class DisplaySettingsSheet extends StatelessWidget {
                         isSelected:
                             themeProvider.themeMode == AppThemeMode.dark,
                         onTap: () => _changeThemeAndRestart(
-                          context, 
+                          context,
                           AppThemeMode.dark,
                           themeProvider,
                         ),
@@ -84,13 +84,15 @@ class DisplaySettingsSheet extends StatelessWidget {
     );
   }
 
-  void _changeThemeAndRestart(BuildContext context, AppThemeMode mode, ThemeProvider themeProvider) {
+  void _changeThemeAndRestart(
+      BuildContext context, AppThemeMode mode, ThemeProvider themeProvider) {
     themeProvider.setThemeMode(mode);
   }
 
   Widget _buildHeader(BuildContext context, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 16), // Added top padding for space
+      padding: const EdgeInsets.fromLTRB(
+          16, 24, 16, 16), // Added top padding for space
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -98,8 +100,8 @@ class DisplaySettingsSheet extends StatelessWidget {
             width: 40,
             child: IconButton(
               icon: Icon(
-                Icons.arrow_back, 
-                size: 20, 
+                Icons.arrow_back,
+                size: 20,
                 color: Theme.of(context).iconTheme.color,
               ),
               onPressed: () => Navigator.pop(context),
@@ -154,8 +156,8 @@ class DisplaySettingsSheet extends StatelessWidget {
                       title,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: isSelected 
-                                ? AppColors.primaryBlue 
+                            color: isSelected
+                                ? AppColors.primaryBlue
                                 : Theme.of(context).textTheme.bodyLarge?.color,
                           ),
                     ),
@@ -163,7 +165,7 @@ class DisplaySettingsSheet extends StatelessWidget {
                     Text(
                       subtitle,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: isSelected 
+                            color: isSelected
                                 ? AppColors.primaryBlue.withOpacity(0.7)
                                 : Theme.of(context).textTheme.bodySmall?.color,
                           ),

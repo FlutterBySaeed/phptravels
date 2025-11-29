@@ -29,7 +29,15 @@ class AirportService {
           return [];
         }
 
-        return jsonBody.map<Map<String, dynamic>>(_parseAirportData).toList();
+        return jsonBody
+            .where((item) {
+              final loctype = item['loctype'] ?? '';
+
+              // Keep all entries with loctype == 'ap' (both individual airports and "All airports" aggregates)
+              return loctype == 'ap';
+            })
+            .map<Map<String, dynamic>>(_parseAirportData)
+            .toList();
       } else {
         return [];
       }
@@ -39,7 +47,6 @@ class AirportService {
   }
 
   static Map<String, dynamic> _parseAirportData(dynamic airport) {
-    // Extract airport name from entityKey (e.g., "place:Allama_Iqbal_International_Airport")
     String airportName = '';
     if (airport['entityKey'] != null) {
       final entityKey = airport['entityKey'].toString();
@@ -69,14 +76,18 @@ class AirportService {
 
     final countryCode = (airport['cc'] ?? '').toString().toLowerCase();
 
+    // Get loctype to distinguish cities from airports ('ap' = airport)
+    final loctype = airport['loctype'] ?? '';
+
     return {
       'city': cityName,
       'country': countryName,
       'code': airportCode,
       'countryCode': countryCode.toUpperCase(),
-      'displayName': '$cityName\n$countryName',
+      'displayName': '$cityName\\n$countryName',
       'isSelected': false,
       'fullName': airportName,
+      'loctype': loctype, // 'ap' for airport, other values for cities
     };
   }
 }

@@ -4,20 +4,19 @@ import 'package:phptravels/SCREENS/navigation.dart';
 import 'package:phptravels/providers/theme_provider.dart';
 import 'package:phptravels/providers/language_provider.dart';
 import 'package:phptravels/THEMES/app_theme.dart';
-import 'package:phptravels/l10n/app_localizations.dart'; // Import your generated localizations
+import 'package:phptravels/l10n/app_localizations.dart';
 import 'package:phptravels/providers/currency_provider.dart';
+import 'package:phptravels/providers/search_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   final languageProvider = LanguageProvider();
   await languageProvider.init();
-  
 
   final currencyProvider = CurrencyProvider();
   await currencyProvider.init();
 
-  
   runApp(
     MultiProvider(
       providers: [
@@ -28,8 +27,11 @@ void main() async {
           create: (context) => languageProvider,
         ),
         ChangeNotifierProvider(
-          create:(context)=> currencyProvider,
-        )
+          create: (context) => currencyProvider,
+        ),
+        ChangeNotifierProvider(
+          create: (context) => SearchProvider(),
+        ),
       ],
       child: const PHPTRAVELS(),
     ),
@@ -38,7 +40,7 @@ void main() async {
 
 class PHPTRAVELS extends StatelessWidget {
   const PHPTRAVELS({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     return Consumer2<ThemeProvider, LanguageProvider>(
@@ -49,7 +51,7 @@ class PHPTRAVELS extends StatelessWidget {
           darkTheme: AppThemes.darkTheme(),
           themeMode: _getThemeMode(themeProvider.themeMode),
           debugShowCheckedModeBanner: false,
-          
+
           // Localization Configuration
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: languageProvider.supportedLocalesList,
@@ -73,7 +75,7 @@ class PHPTRAVELS extends StatelessWidget {
             // If the locale is not supported, use the first one from the supported locales
             return supportedLocales.first;
           },
-          
+
           home: const MainApp(),
         );
       },

@@ -78,7 +78,8 @@ class _LanguageSettingsSheetState extends State<LanguageSettingsSheet> {
                     final isSelected = _selectedLanguage == language['code'];
                     return _buildLanguageOption(
                       context,
-                      _resolveLanguageName(language['name']!, language['code']!, l10n),
+                      _resolveLanguageName(
+                          language['name']!, language['code']!, l10n),
                       language['code']!,
                       language['displayCode']!,
                       isSelected,
@@ -101,7 +102,8 @@ class _LanguageSettingsSheetState extends State<LanguageSettingsSheet> {
     );
   }
 
-  String _resolveLanguageName(String fallback, String code, AppLocalizations l10n) {
+  String _resolveLanguageName(
+      String fallback, String code, AppLocalizations l10n) {
     switch (code) {
       case 'en':
         return l10n.english;
@@ -209,16 +211,12 @@ class _LanguageSettingsSheetState extends State<LanguageSettingsSheet> {
                   children: [
                     Text(
                       languageName,
-                      style:
-                          Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                fontWeight: FontWeight.w500,
-                                color: isSelected
-                                    ? AppColors.primaryBlue
-                                    : Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge
-                                        ?.color,
-                              ),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: isSelected
+                                ? AppColors.primaryBlue
+                                : Theme.of(context).textTheme.bodyLarge?.color,
+                          ),
                     ),
                   ],
                 ),

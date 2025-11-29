@@ -8,6 +8,9 @@ import 'package:uuid/uuid.dart';
 import 'package:phptravels/models/search_history_model.dart';
 import 'package:phptravels/services/search_history_service.dart';
 import 'package:phptravels/widgets/recent_searches_section.dart';
+import 'package:phptravels/pages/flights_results_page.dart';
+import 'package:provider/provider.dart';
+import 'package:phptravels/providers/search_provider.dart';
 
 enum TripType { oneWay, roundTrip, multiCity }
 
@@ -83,25 +86,92 @@ class _FlightsSearchPageState extends State<FlightsSearchPage> {
     super.initState();
     _departureDate = DateTime.now();
     _initializeMultiCitySegments();
+
+    // Initialize with provider values
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final searchProvider =
+          Provider.of<SearchProvider>(context, listen: false);
+      if (searchProvider.destination.isNotEmpty) {
+        _oneWayToController.text = searchProvider.destination;
+        _roundTripToController.text = searchProvider.destination;
+        if (_multiCitySegments.isNotEmpty) {
+          // For multi-city, usually the first segment's destination matches
+          _multiCitySegments[0].toController.text = searchProvider.destination;
+          _multiCitySegments[0].to = searchProvider.destination;
+        }
+      }
+    });
+
+    // Add listeners to sync changes to provider
+    _oneWayToController.addListener(() {
+      if (_tripType == TripType.oneWay) {
+        _updateProviderDestination(_oneWayToController.text);
+      }
+    });
+
+    _roundTripToController.addListener(() {
+      if (_tripType == TripType.roundTrip) {
+        _updateProviderDestination(_roundTripToController.text);
+      }
+    });
+
+    // Note: Multi-city listener is trickier as segments are dynamic,
+    // but we can handle it in _updateMultiCitySegment
+  }
+
+  void _updateProviderDestination(String destination) {
+    final searchProvider = Provider.of<SearchProvider>(context, listen: false);
+    if (searchProvider.destination != destination) {
+      searchProvider.setDestination(destination);
+      // Sync other controllers
+      if (_oneWayToController.text != destination)
+        _oneWayToController.text = destination;
+      if (_roundTripToController.text != destination)
+        _roundTripToController.text = destination;
+
+      // Sync first multi-city segment if it exists
+      if (_multiCitySegments.isNotEmpty) {
+        if (_multiCitySegments[0].toController.text != destination) {
+          _multiCitySegments[0].toController.text = destination;
+          _multiCitySegments[0].to = destination;
+        }
+      }
+    }
   }
 
   Future<void> _saveSearchToHistory() async {
     final tripTypeString = _tripType.toString().split('.').last;
 
+    List<Map<String, dynamic>>? segments;
+    if (_tripType == TripType.multiCity) {
+      segments = _multiCitySegments
+          .map((s) => {
+                'from': s.from,
+                'to': s.to,
+                'date': s.date?.toIso8601String(),
+              })
+          .toList();
+    }
+
     final search = FlightSearchHistory(
       id: const Uuid().v4(),
       from: _tripType == TripType.oneWay
           ? _oneWayFromController.text
-          : _roundTripFromController.text,
+          : (_tripType == TripType.roundTrip
+              ? _roundTripFromController.text
+              : _multiCitySegments.first.from),
       to: _tripType == TripType.oneWay
           ? _oneWayToController.text
-          : _roundTripToController.text,
+          : (_tripType == TripType.roundTrip
+              ? _roundTripToController.text
+              : _multiCitySegments.last.to),
       departureDate: _departureDate ?? DateTime.now(),
       returnDate: _returnDate,
       passengers: _passengers.total,
       cabinClass: _cabinClass,
       tripType: tripTypeString,
       createdAt: DateTime.now(),
+      segments: segments,
     );
 
     await SearchHistoryService.saveSearch(search);
@@ -114,6 +184,41 @@ class _FlightsSearchPageState extends State<FlightsSearchPage> {
       date: DateTime.now(),
     ));
     _multiCitySegments.add(MultiCitySegment());
+  }
+
+  void _navigateToResults(BuildContext context) {
+    String from = '';
+    String to = '';
+    DateTime departureDate = _departureDate ?? DateTime.now();
+
+    switch (_tripType) {
+      case TripType.oneWay:
+        from = _oneWayFromController.text;
+        to = _oneWayToController.text;
+        break;
+      case TripType.roundTrip:
+        from = _roundTripFromController.text;
+        to = _roundTripToController.text;
+        break;
+      case TripType.multiCity:
+        if (_multiCitySegments.isNotEmpty) {
+          from = _multiCitySegments.first.from;
+          to = _multiCitySegments.last.to;
+        }
+        break;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FlightsResultsPage(
+          from: from,
+          to: to,
+          departureDate: departureDate,
+          passengers: _passengers.total,
+        ),
+      ),
+    );
   }
 
   @override
@@ -177,6 +282,11 @@ class _FlightsSearchPageState extends State<FlightsSearchPage> {
         _multiCitySegments[index].from = newSegment.from;
         _multiCitySegments[index].to = newSegment.to;
         _multiCitySegments[index].hasError = newSegment.hasError;
+
+        // Sync with provider if it's the first segment
+        if (index == 0 && _tripType == TripType.multiCity) {
+          _updateProviderDestination(newSegment.to);
+        }
       }
     });
   }
@@ -260,6 +370,7 @@ class _FlightsSearchPageState extends State<FlightsSearchPage> {
                     setState(() {
                       _recentSearchesVersion++;
                     });
+                    _navigateToResults(context);
                   }
                 },
               ),
@@ -291,6 +402,16 @@ class _FlightsSearchPageState extends State<FlightsSearchPage> {
         _roundTripToController.text = search.to;
         _departureDate = search.departureDate;
         _returnDate = search.returnDate;
+      } else if (search.tripType == 'multiCity' && search.segments != null) {
+        _tripType = TripType.multiCity;
+        _multiCitySegments.clear();
+        for (var s in search.segments!) {
+          _multiCitySegments.add(MultiCitySegment(
+            from: s['from'],
+            to: s['to'],
+            date: DateTime.parse(s['date']),
+          ));
+        }
       }
 
       _passengers = PassengerCount(
@@ -917,7 +1038,7 @@ class DualDateField extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final returnDateHasError = validateFields && returnDate == null;
 
-    return Container(
+    return SizedBox(
       height: 70,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1160,14 +1281,26 @@ class AirportField extends StatelessWidget {
   }
 
   void _showDestinationSearch(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DestinationSearchPage(
-          onDestinationSelected: (destination) {
-            controller.text = destination;
-            onFieldUpdated();
-          },
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.95,
+        minChildSize: 0.5,
+        maxChildSize: 0.98,
+        builder: (_, controller) => Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: DestinationSearchPage(
+            onDestinationSelected: (destination, city, country) {
+              this.controller.text = destination;
+              onFieldUpdated();
+              Navigator.pop(context);
+            },
+          ),
         ),
       ),
     );
@@ -1212,7 +1345,7 @@ class _MultiCitySegmentRowState extends State<MultiCitySegmentRow> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
+          SizedBox(
             height: 42,
             child: Center(
               child: _RemoveSegmentButton(
@@ -1296,7 +1429,17 @@ class _CompactAirportField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final display = controller.text.isNotEmpty ? controller.text : '...';
+    String display = controller.text.isNotEmpty ? controller.text : '...';
+
+    // Extract code if present (e.g. "Dubai (DXB)" -> "DXB")
+    if (controller.text.isNotEmpty) {
+      final RegExp regExp = RegExp(r'\(([^)]+)\)$');
+      final match = regExp.firstMatch(controller.text);
+      if (match != null) {
+        display = match.group(1) ?? display;
+      }
+    }
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -1342,14 +1485,26 @@ class _CompactAirportField extends StatelessWidget {
   }
 
   void _showDestinationSearch(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DestinationSearchPage(
-          onDestinationSelected: (destination) {
-            onDestinationSelected(destination);
-            onFieldUpdated();
-          },
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.95,
+        minChildSize: 0.5,
+        maxChildSize: 0.98,
+        builder: (_, controller) => Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: DestinationSearchPage(
+            onDestinationSelected: (destination, city, country) {
+              onDestinationSelected(destination);
+              onFieldUpdated();
+              Navigator.pop(context);
+            },
+          ),
         ),
       ),
     );
@@ -2043,14 +2198,50 @@ class _Divider extends StatelessWidget {
   }
 }
 
-class _SwapButton extends StatelessWidget {
+class _SwapButton extends StatefulWidget {
   final VoidCallback onTap;
   const _SwapButton({required this.onTap});
 
   @override
+  State<_SwapButton> createState() => _SwapButtonState();
+}
+
+class _SwapButtonState extends State<_SwapButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _animation = Tween<double>(begin: 0, end: 0.5).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleTap() {
+    if (_controller.isCompleted) {
+      _controller.reverse();
+    } else {
+      _controller.forward();
+    }
+    widget.onTap();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: _handleTap,
       child: Container(
         width: 30,
         height: 30,
@@ -2063,10 +2254,13 @@ class _SwapButton extends StatelessWidget {
             width: 1,
           ),
         ),
-        child: Icon(
-          LucideIcons.arrowUpDown,
-          size: 16,
-          color: Theme.of(context).iconTheme.color,
+        child: RotationTransition(
+          turns: _animation,
+          child: Icon(
+            LucideIcons.arrowUpDown,
+            size: 16,
+            color: Theme.of(context).iconTheme.color,
+          ),
         ),
       ),
     );
@@ -2156,7 +2350,8 @@ class _AddFlightButton extends StatelessWidget {
 }
 
 class DestinationSearchPage extends StatefulWidget {
-  final Function(String) onDestinationSelected;
+  final Function(String destination, String city, String country)
+      onDestinationSelected;
   const DestinationSearchPage({super.key, required this.onDestinationSelected});
 
   @override
@@ -2168,6 +2363,48 @@ class _DestinationSearchPageState extends State<DestinationSearchPage> {
   final FocusNode _searchFocus = FocusNode();
   List<Map<String, dynamic>> _searchResults = [];
   bool _isLoading = false;
+
+  // Popular cities to show when no search
+  final List<Map<String, dynamic>> _popularCities = [
+    {
+      'city': 'Jeddah',
+      'country': 'Saudi Arabia',
+      'code': 'JED',
+      'loctype': 'city'
+    },
+    {
+      'city': 'Abha',
+      'country': 'Saudi Arabia',
+      'code': 'AHB',
+      'loctype': 'city'
+    },
+    {
+      'city': 'Amsterdam',
+      'country': 'Netherlands',
+      'code': 'AMS',
+      'loctype': 'city'
+    },
+    {
+      'city': 'Abu Dhabi',
+      'country': 'United Arab Emirates',
+      'code': 'AUH',
+      'loctype': 'city'
+    },
+    {'city': 'Baku', 'country': 'Azerbaijan', 'code': 'BAK', 'loctype': 'city'},
+    {'city': 'Doha', 'country': 'Qatar', 'code': 'DOH', 'loctype': 'city'},
+    {
+      'city': 'Dubai',
+      'country': 'United Arab Emirates',
+      'code': 'DXB',
+      'loctype': 'city'
+    },
+    {
+      'city': 'Hail',
+      'country': 'Saudi Arabia',
+      'code': 'HAS',
+      'loctype': 'city'
+    },
+  ];
 
   @override
   void initState() {
@@ -2208,110 +2445,114 @@ class _DestinationSearchPageState extends State<DestinationSearchPage> {
     });
   }
 
-  void _selectDestination(String destination) {
-    widget.onDestinationSelected(destination);
-    Navigator.pop(context);
+  void _selectDestination(Map<String, dynamic> airport) {
+    final destination = '${airport['city']} (${airport['code']})';
+    final city = airport['city'] ?? '';
+    final country = airport['country'] ?? '';
+    widget.onDestinationSelected(destination, city, country);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: _buildAppBar(context),
-      body: Column(
-        children: [
-          _buildSearchBar(context),
-          Expanded(
-            child: _buildSearchResults(context),
-          ),
-        ],
-      ),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    return AppBar(
-      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-      elevation: 0,
-      leading: IconButton(
-        icon: Icon(
-          Icons.arrow_back,
-          color: Theme.of(context).iconTheme.color,
-          size: 20,
-        ),
-        onPressed: () => Navigator.pop(context),
-      ),
-      title: Text(
-        l10n.searchFlights,
-        style: Theme.of(context).textTheme.titleLarge,
-      ),
-      titleSpacing: 0,
-      centerTitle: false,
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(1),
-        child: Container(
-          color: Theme.of(context).dividerColor,
-          height: 1,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSearchBar(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: Theme.of(context).dividerColor,
-            width: 1,
-          ),
-        ),
-        child: Row(
-          children: [
-            const SizedBox(width: 12),
-            Container(
-              width: 24,
-              height: 24,
-              alignment: Alignment.center,
-              child: Icon(
-                Icons.search,
-                size: 20,
-                color: Theme.of(context).hintColor,
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: TextField(
-                controller: _searchController,
-                focusNode: _searchFocus,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: l10n.searchDestination,
-                  hintStyle: Theme.of(context).textTheme.bodySmall,
-                ),
-                onChanged: _performSearch,
-              ),
-            ),
-            if (_searchController.text.isNotEmpty)
+    return Column(
+      children: [
+        // Top bar with close button and search field
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+          child: Row(
+            children: [
+              // Close button
               IconButton(
-                icon: Icon(
-                  Icons.close,
-                  size: 18,
-                  color: Theme.of(context).hintColor,
-                ),
-                onPressed: _clearSearch,
+                icon: const Icon(Icons.close, size: 28),
+                onPressed: () => Navigator.pop(context),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
               ),
-          ],
+              const SizedBox(width: 12),
+              // Search field
+              Expanded(
+                child: TextField(
+                  controller: _searchController,
+                  focusNode: _searchFocus,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                      ),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Where to?',
+                    hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontSize: 18,
+                          color: Colors.grey[400],
+                          fontWeight: FontWeight.w400,
+                        ),
+                  ),
+                  onChanged: _performSearch,
+                ),
+              ),
+              if (_searchController.text.isNotEmpty)
+                IconButton(
+                  icon: Icon(
+                    Icons.close,
+                    size: 18,
+                    color: Theme.of(context).hintColor,
+                  ),
+                  onPressed: _clearSearch,
+                ),
+            ],
+          ),
         ),
-      ),
+        // Divider
+        Divider(height: 1, thickness: 1, color: Colors.grey[200]),
+        // Content
+        Expanded(
+          child: _buildContent(context),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
+    // Show search results if user is searching
+    if (_searchController.text.length >= 2) {
+      return _buildSearchResults(context);
+    }
+
+    // Otherwise show popular cities
+    return ListView(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      children: [
+        // Recently searched section (empty for now)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Text(
+            'RECENTLY SEARCHED AIRPORTS',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: Colors.grey[800],
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        // Popular cities section
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Text(
+            'POPULAR CITIES',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: Colors.grey[800],
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+        ..._popularCities
+            .map((city) => _buildAirportItem(context, city))
+            .toList(),
+      ],
     );
   }
 
@@ -2368,82 +2609,142 @@ class _DestinationSearchPageState extends State<DestinationSearchPage> {
       );
     }
 
-    return ListView.builder(
-      itemCount: _searchResults.length,
-      itemBuilder: (context, index) {
-        final airport = _searchResults[index];
-        return _buildAirportItem(context, airport);
-      },
+    // Group results by city - show city first, then its airports
+    final groupedResults = <Widget>[];
+    final processedCities = <String>{};
+
+    for (var result in _searchResults) {
+      final city = result['city'] ?? '';
+      final country = result['country'] ?? '';
+      final code = result['code'] ?? '';
+      final cityKey = '$city|$country';
+
+      // Skip if we've already processed this city
+      if (processedCities.contains(cityKey)) continue;
+      processedCities.add(cityKey);
+
+      // Create a city entry (non-airport version)
+      final cityEntry = {
+        'city': city,
+        'country': country,
+        'code': code,
+        'loctype': 'city', // Mark as city, not airport
+      };
+
+      // Add city first
+      groupedResults.add(_buildAirportItem(context, cityEntry));
+
+      // Then add all airports for this city
+      final airports = _searchResults
+          .where((r) =>
+              r['city'] == city &&
+              r['country'] == country &&
+              r['loctype'] == 'ap')
+          .toList();
+
+      for (var airport in airports) {
+        groupedResults.add(_buildAirportItem(context, airport));
+      }
+    }
+
+    return ListView(
+      children: groupedResults,
     );
   }
 
   Widget _buildAirportItem(BuildContext context, Map<String, dynamic> airport) {
-    // Determine if this is a city or airport based on fullName
-    final bool isAirport = airport['fullName'] != null &&
-        airport['fullName'].toString().isNotEmpty;
+    // Use loctype to determine if this is an airport ('ap') or city
+    final bool isAirport = airport['loctype'] == 'ap';
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () =>
-            _selectDestination('${airport['city']} (${airport['code']})'),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            children: [
-              // Icon - location pin for city, airplane for airport
-              Container(
-                width: 40,
-                height: 40,
-                alignment: Alignment.center,
-                child: Icon(
-                  isAirport ? Icons.flight : Icons.location_on_outlined,
-                  size: 24,
-                  color: Colors.grey[600],
-                ),
-              ),
-              const SizedBox(width: 12),
-              // Airport/City name and country
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      isAirport
-                          ? (airport['fullName'] ?? airport['city'] ?? '')
-                          : (airport['city'] ?? ''),
+    // For airports, show the actual airport name from fullName
+    // For cities, just show the city name
+    final String displayName = isAirport
+        ? (airport['fullName'] ?? '${airport['city'] ?? ''} Airport')
+        : (airport['city'] ?? '');
+
+    return Column(
+      children: [
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => _selectDestination(airport),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                children: [
+                  // Icon - location pin for city, airplane for airport
+                  Container(
+                    width: 40,
+                    height: 40,
+                    alignment: Alignment.center,
+                    child: Icon(
+                      isAirport ? Icons.flight : Icons.location_on_outlined,
+                      size: 22,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // Airport/City name and country
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          displayName,
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                  ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          airport['country'] ?? '',
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Colors.grey[600],
+                                    fontSize: 12,
+                                  ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // Airport code in a gray container
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      airport['code'] ?? '',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w600,
-                            fontSize: 15,
-                          ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      airport['country'] ?? '',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
                             fontSize: 13,
+                            color: Colors.grey[700],
                           ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 12),
-              // Airport code
-              Text(
-                airport['code'] ?? '',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                    ),
-              ),
-            ],
+            ),
           ),
         ),
-      ),
+        // Very light divider between items
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Divider(
+            height: 1,
+            thickness: 0.3,
+            color: Colors.grey[200],
+          ),
+        ),
+      ],
     );
   }
 
@@ -2756,20 +3057,19 @@ class _CustomDatePickerPageState extends State<CustomDatePickerPage> {
     final now = DateTime.now();
     final cleanToday = DateTime(now.year, now.month, now.day);
     final cleanDay = DateTime(day.year, day.month, day.day);
-    final DateTime? departure = _departureDate;
+    final DateTime departure = _departureDate;
 
     if (cleanDay.isBefore(cleanToday)) return false;
     if (_selectingDeparture) return true;
-    if (departure == null) return false;
 
     return cleanDay
         .isAfter(DateTime(departure.year, departure.month, departure.day));
   }
 
   bool _isDateInRange(DateTime day) {
-    final DateTime? departure = _departureDate;
+    final DateTime departure = _departureDate;
     final DateTime? returnDate = _returnDate;
-    if (departure == null || returnDate == null) return false;
+    if (returnDate == null) return false;
 
     final d = DateTime(departure.year, departure.month, departure.day);
     final r = DateTime(returnDate.year, returnDate.month, returnDate.day);

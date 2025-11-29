@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:country_picker/country_picker.dart';
-import 'package:currency_picker/currency_picker.dart';
 
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:phptravels/providers/theme_provider.dart';
 import 'package:phptravels/providers/language_provider.dart';
+import 'package:phptravels/providers/currency_provider.dart';
 import 'package:phptravels/PAGES/display_settings.dart';
 import 'package:phptravels/PAGES/payment_methods.dart';
 import 'package:phptravels/PAGES/language_settings.dart';
+import 'package:phptravels/PAGES/currency_settings.dart';
 import 'package:phptravels/THEMES/app_theme.dart';
 import 'package:phptravels/l10n/app_localizations.dart';
 
@@ -20,7 +21,6 @@ class AccountsPage extends StatefulWidget {
 }
 
 class _AccountsPageState extends State<AccountsPage> {
-  String _selectedCurrency = 'PKR';
   String _selectedCountry = 'Pakistan';
 
   String _getLanguageDisplayName(BuildContext context, String code) {
@@ -46,24 +46,6 @@ class _AccountsPageState extends State<AccountsPage> {
       case AppThemeMode.system:
         return l10n.automatic;
     }
-  }
-
-  void _showCurrencyPicker(BuildContext context) {
-    showCurrencyPicker(
-      context: context,
-      showFlag: true,
-      showCurrencyName: true,
-      showCurrencyCode: true,
-      onSelect: (Currency currency) {
-        setState(() {
-          _selectedCurrency = currency.code;
-        });
-      },
-      theme: CurrencyPickerThemeData(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        bottomSheetHeight: MediaQuery.of(context).size.height * 0.8,
-      ),
-    );
   }
 
   void _showCountryPicker(BuildContext context) {
@@ -134,128 +116,129 @@ class _AccountsPageState extends State<AccountsPage> {
   }
 
   Widget _buildLoginPrompt() {
-  return Container(
-    width: double.infinity,
-    decoration: const BoxDecoration(
-      gradient: LinearGradient(
-        colors: [AppColors.primaryBlue, AppColors.darkBlue],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [AppColors.primaryBlue, AppColors.darkBlue],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
-    ),
-    child: Stack(
-      children: [
-        Positioned(
-          right: -35,
-          top: 10,
-          bottom: 0,
-          child: Center(
-            child: Icon(
-              LucideIcons.plane,
-              size: 115,
-              color: AppColors.white.withOpacity(0.1),
-            ),
-          ),
-        ),
-        // Inner rounded white container
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-            child: Container(
-              height: 30, // Adjust height as needed
-              color: Theme.of(context).cardColor,
-            ),
-          ),
-        ),
-        // Your content positioned above the inner rounded part
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 30), // Match the height above
-            child: Padding(
-              padding: const EdgeInsets.only(
-                left: 16,
-                right: 16,
-                top: 65,
-                bottom: 12,
+      child: Stack(
+        children: [
+          Positioned(
+            right: -35,
+            top: 10,
+            bottom: 0,
+            child: Center(
+              child: Icon(
+                LucideIcons.plane,
+                size: 115,
+                color: AppColors.white.withOpacity(0.1),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // ... your existing content
-                  Container(
-                    width: 45,
-                    height: 45,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.white.withOpacity(0.9),
+            ),
+          ),
+          // Inner rounded white container
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+              child: Container(
+                height: 30, // Adjust height as needed
+                color: Theme.of(context).cardColor,
+              ),
+            ),
+          ),
+          // Your content positioned above the inner rounded part
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding:
+                  const EdgeInsets.only(bottom: 30), // Match the height above
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  top: 65,
+                  bottom: 12,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // ... your existing content
+                    Container(
+                      width: 45,
+                      height: 45,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.white.withOpacity(0.9),
+                      ),
+                      child: const Icon(
+                        Icons.person,
+                        size: 35,
+                        color: Color.fromARGB(255, 209, 215, 228),
+                      ),
                     ),
-                    child: const Icon(
-                      Icons.person,
-                      size: 35,
-                      color: Color.fromARGB(255, 209, 215, 228),
+                    const SizedBox(height: 12),
+                    Text(
+                      AppLocalizations.of(context).readyToStart,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Color.fromARGB(158, 255, 255, 255),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        fontFamily: 'Inter',
+                        height: 1.4,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    AppLocalizations.of(context).readyToStart,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Color.fromARGB(158, 255, 255, 255),
-                      fontSize: 10,
-                      fontWeight: FontWeight.w800,
-                      fontFamily: 'Inter',
-                      height: 1.4,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Center(
-                    child: Transform.scale(
-                      scale: 0.85,
-                      child: SizedBox(
-                        width: 145,
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color.fromARGB(91, 229, 231, 235),
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 0,
-                              horizontal: 10,
+                    const SizedBox(height: 10),
+                    Center(
+                      child: Transform.scale(
+                        scale: 0.85,
+                        child: SizedBox(
+                          width: 145,
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  const Color.fromARGB(91, 229, 231, 235),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 0,
+                                horizontal: 10,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              elevation: 0,
                             ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            elevation: 0,
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context).signUpLogin,
-                            style: const TextStyle(
-                              color: AppColors.white,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w800,
-                              fontFamily: 'Inter',
+                            child: Text(
+                              AppLocalizations.of(context).signUpLogin,
+                              style: const TextStyle(
+                                color: AppColors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w800,
+                                fontFamily: 'Inter',
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 
   Widget _buildDivider(BuildContext context) {
     return Padding(
@@ -374,12 +357,10 @@ class _AccountsPageState extends State<AccountsPage> {
                       children: [
                         Text(
                           'PHPTravels',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
                         ),
                         const SizedBox(width: 6),
                         Container(
@@ -424,8 +405,8 @@ class _AccountsPageState extends State<AccountsPage> {
   }
 
   Widget _buildSettings(BuildContext context) {
-    return Consumer<LanguageProvider>(
-      builder: (context, languageProvider, child) {
+    return Consumer2<LanguageProvider, CurrencyProvider>(
+      builder: (context, languageProvider, currencyProvider, child) {
         final l10n = AppLocalizations.of(context);
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -443,7 +424,8 @@ class _AccountsPageState extends State<AccountsPage> {
                 context,
                 LucideIcons.globe,
                 l10n.language,
-                _getLanguageDisplayName(context, languageProvider.currentLanguageCode),
+                _getLanguageDisplayName(
+                    context, languageProvider.currentLanguageCode),
                 onTap: _showLanguageSettings,
               ),
               const SizedBox(height: 2),
@@ -451,8 +433,8 @@ class _AccountsPageState extends State<AccountsPage> {
                 context,
                 LucideIcons.wallet,
                 l10n.currency,
-                _selectedCurrency,
-                onTap: () => _showCurrencyPicker(context),
+                currencyProvider.currencyCode,
+                onTap: _showCurrencySettings,
               ),
               const SizedBox(height: 2),
               _buildSettingRowWithAction(
@@ -518,7 +500,8 @@ class _AccountsPageState extends State<AccountsPage> {
                 width: 44,
                 height: 44,
                 alignment: Alignment.center,
-                child: Icon(icon, size: 24, color: Theme.of(context).iconTheme.color),
+                child: Icon(icon,
+                    size: 24, color: Theme.of(context).iconTheme.color),
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -560,7 +543,8 @@ class _AccountsPageState extends State<AccountsPage> {
                 width: 44,
                 height: 44,
                 alignment: Alignment.center,
-                child: Icon(icon, size: 24, color: Theme.of(context).iconTheme.color),
+                child: Icon(icon,
+                    size: 24, color: Theme.of(context).iconTheme.color),
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -602,7 +586,8 @@ class _AccountsPageState extends State<AccountsPage> {
                 width: 44,
                 height: 44,
                 alignment: Alignment.center,
-                child: Icon(icon, size: 24, color: Theme.of(context).iconTheme.color),
+                child: Icon(icon,
+                    size: 24, color: Theme.of(context).iconTheme.color),
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -650,7 +635,8 @@ class _AccountsPageState extends State<AccountsPage> {
                 width: 44,
                 height: 44,
                 alignment: Alignment.center,
-                child: Icon(icon, size: 24, color: Theme.of(context).iconTheme.color),
+                child: Icon(icon,
+                    size: 24, color: Theme.of(context).iconTheme.color),
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -694,7 +680,8 @@ class _AccountsPageState extends State<AccountsPage> {
   }
 
   void _showLanguageSettings() {
-    final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
+    final languageProvider =
+        Provider.of<LanguageProvider>(context, listen: false);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -725,6 +712,21 @@ class _AccountsPageState extends State<AccountsPage> {
       builder: (context) => Padding(
         padding: const EdgeInsets.only(top: 40),
         child: const DisplaySettingsSheet(),
+      ),
+    );
+  }
+
+  void _showCurrencySettings() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.only(top: 40),
+        child: const CurrencySettingsSheet(),
       ),
     );
   }
