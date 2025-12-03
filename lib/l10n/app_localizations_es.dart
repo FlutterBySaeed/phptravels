@@ -292,4 +292,218 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get newLabel => 'Nuevo';
+
+  @override
+  String get propertiesFound => 'propiedades encontradas';
+
+  @override
+  String get propertyFound => 'propiedad encontrada';
+
+  @override
+  String get filters => 'Filtros';
+
+  @override
+  String get propertyName => 'Nombre de Propiedad';
+
+  @override
+  String get recommended => 'Recomendado';
+
+  @override
+  String get cheapest => 'Más Barato';
+
+  @override
+  String get priceRange => 'Rango de Precio';
+
+  @override
+  String get districtAreasHotels => 'Distritos/Áreas/Hoteles';
+
+  @override
+  String get starRating => 'Clasificación por Estrellas';
+
+  @override
+  String get reviewScore => 'Puntuación de Reseñas';
+
+  @override
+  String get listView => 'Vista de Lista';
+
+  @override
+  String get mapView => 'Vista de Mapa';
+
+  @override
+  String get retry => 'Reintentar';
+
+  @override
+  String get failedToLoadHotels =>
+      'Error al cargar hoteles. Por favor, inténtelo de nuevo.';
+
+  @override
+  String get totalPrice => 'Precio Total';
+
+  @override
+  String get pricePerNight => 'Precio por noche';
+
+  @override
+  String get breakfastIncluded => 'Desayuno Incluido';
+
+  @override
+  String get freeCancellation => 'Cancelación Gratis';
+
+  @override
+  String get bookNow => 'Reservar Ahora';
+
+  @override
+  String get select => 'Seleccionar';
+
+  @override
+  String get roomOnly => 'Solo habitación';
+
+  @override
+  String get night => 'Noche';
+
+  @override
+  String get nights => 'Noches';
+
+  @override
+  String forNightGuests(Object guests, Object nights) {
+    return 'para $nights Noche, $guests Huéspedes';
+  }
+
+  @override
+  String get includingTaxesFees => 'Incluyendo impuestos y tarifas';
+
+  @override
+  String get chargesSummary => 'Resumen de Cargos';
+
+  @override
+  String get roomCharges => 'Cargos de Habitación';
+
+  @override
+  String get taxesAndFees => 'Impuestos y Tarifas';
+
+  @override
+  String get totalAmount => 'Monto Total';
+
+  @override
+  String get whereTo => '¿A dónde?';
+
+  @override
+  String get recentlySearchedCities => 'CIUDADES BUSCADAS RECIENTEMENTE';
+
+  @override
+  String get popularCities => 'CIUDADES POPULARES';
+
+  @override
+  String get noCitiesFound => 'No se encontraron ciudades';
+
+  @override
+  String get typeAtLeastTwoChars => 'Escribe al menos 2 caracteres para buscar';
+
+  @override
+  String get overview => 'Resumen';
+
+  @override
+  String get location => 'Ubicación';
+
+  @override
+  String get reviews => 'Reseñas';
+
+  @override
+  String get facilities => 'Instalaciones';
+
+  @override
+  String get policies => 'Políticas';
+
+  @override
+  String get seeAllRooms => 'Ver Todas las Habitaciones';
+
+  @override
+  String get perNight => 'Por Noche';
+
+  @override
+  String forNightsWithTaxes(Object nights) {
+    return 'para $nights noches con impuestos y tarifas';
+  }
+
+  @override
+  String get perNightWithTaxes => 'por noche con impuestos y tarifas';
+
+  @override
+  String get exclusiveDeal => 'OFERTA EXCLUSIVA';
+
+  @override
+  String get mobileOnlyPrice => 'Precio solo móvil';
+
+  @override
+  String get guestReviews => 'Reseñas de Huéspedes';
+
+  @override
+  String get noReviewsYet => 'Aún no hay reseñas de esta propiedad.';
+
+  @override
+  String get freeParking => 'Estacionamiento Gratuito';
+
+  @override
+  String get parkingAvailable => 'Estacionamiento Disponible';
+
+  @override
+  String get nonSmokingRooms => 'Habitaciones para No Fumadores';
+
+  @override
+  String get dryCleaning => 'Lavado en Seco';
+
+  @override
+  String get freeWifi => 'WiFi Gratuito';
+
+  @override
+  String get airConditioning => 'Aire Acondicionado';
+
+  @override
+  String get tv => 'TV';
+
+  @override
+  String get breakfastAvailable => 'Desayuno Disponible';
+
+  @override
+  String get aboutThisProperty => 'Acerca de esta Propiedad';
+
+  @override
+  String get propertyPolicies => 'Políticas de la Propiedad';
+
+  @override
+  String get checkInTime => 'Hora de Check-in';
+
+  @override
+  String get checkOutTime => 'Hora de Check-out';
+
+  @override
+  String get nearbySimilarStays => 'Estadías Similares Cercanas';
+
+  @override
+  String get kmAway => 'km de distancia';
+
+  @override
+  String get includesTaxesAndFees => 'Incluye impuestos y tarifas';
+
+  @override
+  String forNightsRange(Object nights) {
+    return 'Para $nights noche';
+  }
+
+  @override
+  String forMultipleNightsRange(Object nights) {
+    return 'Para $nights noches';
+  }
+
+  @override
+  String get chooseRoom => 'Elegir Habitación';
+
+  @override
+  String get enterPropertyName => 'Ingrese nombre de propiedad';
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get typeHotelNameToSearch =>
+      'Escriba el nombre de un hotel para iniciar su búsqueda';
 }

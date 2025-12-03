@@ -292,4 +292,216 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get newLabel => 'جديد';
+
+  @override
+  String get propertiesFound => 'عقارات تم العثور عليها';
+
+  @override
+  String get propertyFound => 'عقار تم العثور عليه';
+
+  @override
+  String get filters => 'الفلاتر';
+
+  @override
+  String get propertyName => 'اسم العقار';
+
+  @override
+  String get recommended => 'موصى به';
+
+  @override
+  String get cheapest => 'الأرخص';
+
+  @override
+  String get priceRange => 'نطاق السعر';
+
+  @override
+  String get districtAreasHotels => 'المناطق/الأحياء/الفنادق';
+
+  @override
+  String get starRating => 'التصنيف بالنجوم';
+
+  @override
+  String get reviewScore => 'درجة التقييم';
+
+  @override
+  String get listView => 'عرض القائمة';
+
+  @override
+  String get mapView => 'عرض الخريطة';
+
+  @override
+  String get retry => 'إعادة المحاولة';
+
+  @override
+  String get failedToLoadHotels => 'فشل تحميل الفنادق. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get totalPrice => 'السعر الإجمالي';
+
+  @override
+  String get pricePerNight => 'السعر لليلة';
+
+  @override
+  String get breakfastIncluded => 'الفطور متضمن';
+
+  @override
+  String get freeCancellation => 'إلغاء مجاني';
+
+  @override
+  String get bookNow => 'احجز الآن';
+
+  @override
+  String get select => 'اختر';
+
+  @override
+  String get roomOnly => 'غرفة فقط';
+
+  @override
+  String get night => 'ليلة';
+
+  @override
+  String get nights => 'ليالي';
+
+  @override
+  String forNightGuests(Object guests, Object nights) {
+    return 'لـ $nights ليلة، $guests ضيوف';
+  }
+
+  @override
+  String get includingTaxesFees => 'شاملاً الضرائب والرسوم';
+
+  @override
+  String get chargesSummary => 'ملخص الرسوم';
+
+  @override
+  String get roomCharges => 'رسوم الغرفة';
+
+  @override
+  String get taxesAndFees => 'الضرائب والرسوم';
+
+  @override
+  String get totalAmount => 'المبلغ الإجمالي';
+
+  @override
+  String get whereTo => 'إلى أين؟';
+
+  @override
+  String get recentlySearchedCities => 'المدن المبحوث عنها مؤخرًا';
+
+  @override
+  String get popularCities => 'المدن الشعبية';
+
+  @override
+  String get noCitiesFound => 'لم يتم العثور على مدن';
+
+  @override
+  String get typeAtLeastTwoChars => 'اكتب حرفين على الأقل للبحث';
+
+  @override
+  String get overview => 'نظرة عامة';
+
+  @override
+  String get location => 'الموقع';
+
+  @override
+  String get reviews => 'التقييمات';
+
+  @override
+  String get facilities => 'المرافق';
+
+  @override
+  String get policies => 'السياسات';
+
+  @override
+  String get seeAllRooms => 'عرض جميع الغرف';
+
+  @override
+  String get perNight => 'لكل ليلة';
+
+  @override
+  String forNightsWithTaxes(Object nights) {
+    return 'لـ $nights ليالي شاملة الضرائب والرسوم';
+  }
+
+  @override
+  String get perNightWithTaxes => 'لكل ليلة شاملة الضرائب والرسوم';
+
+  @override
+  String get exclusiveDeal => 'عرض حصري';
+
+  @override
+  String get mobileOnlyPrice => 'سعر الجوال فقط';
+
+  @override
+  String get guestReviews => 'تقييمات الضيوف';
+
+  @override
+  String get noReviewsYet => 'لا توجد تقييمات بعد لهذا العقار.';
+
+  @override
+  String get freeParking => 'موقف سيارات مجاني';
+
+  @override
+  String get parkingAvailable => 'موقف سيارات متاح';
+
+  @override
+  String get nonSmokingRooms => 'غرف لغير المدخنين';
+
+  @override
+  String get dryCleaning => 'تنظيف جاف';
+
+  @override
+  String get freeWifi => 'واي فاي مجاني';
+
+  @override
+  String get airConditioning => 'تكييف هواء';
+
+  @override
+  String get tv => 'تلفزيون';
+
+  @override
+  String get breakfastAvailable => 'الفطور متوفر';
+
+  @override
+  String get aboutThisProperty => 'حول هذا العقار';
+
+  @override
+  String get propertyPolicies => 'سياسات العقار';
+
+  @override
+  String get checkInTime => 'وقت تسجيل الدخول';
+
+  @override
+  String get checkOutTime => 'وقت تسجيل الخروج';
+
+  @override
+  String get nearbySimilarStays => 'إقامات مماثلة قريبة';
+
+  @override
+  String get kmAway => 'كم بعيدًا';
+
+  @override
+  String get includesTaxesAndFees => 'يشمل الضرائب والرسوم';
+
+  @override
+  String forNightsRange(Object nights) {
+    return 'لـ $nights ليلة';
+  }
+
+  @override
+  String forMultipleNightsRange(Object nights) {
+    return 'لـ $nights ليالي';
+  }
+
+  @override
+  String get chooseRoom => 'اختر الغرفة';
+
+  @override
+  String get enterPropertyName => 'أدخل اسم العقار';
+
+  @override
+  String get cancel => 'إلغاء';
+
+  @override
+  String get typeHotelNameToSearch => 'اكتب اسم فندق لبدء بحثك';
 }

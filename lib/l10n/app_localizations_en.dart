@@ -292,4 +292,216 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get newLabel => 'New';
+
+  @override
+  String get propertiesFound => 'properties found';
+
+  @override
+  String get propertyFound => 'property found';
+
+  @override
+  String get filters => 'Filters';
+
+  @override
+  String get propertyName => 'Property Name';
+
+  @override
+  String get recommended => 'Recommended';
+
+  @override
+  String get cheapest => 'Cheapest';
+
+  @override
+  String get priceRange => 'Price Range';
+
+  @override
+  String get districtAreasHotels => 'District/Areas/Hotels';
+
+  @override
+  String get starRating => 'Star Rating';
+
+  @override
+  String get reviewScore => 'Review Score';
+
+  @override
+  String get listView => 'List View';
+
+  @override
+  String get mapView => 'Map View';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get failedToLoadHotels => 'Failed to load hotels. Please try again.';
+
+  @override
+  String get totalPrice => 'Total Price';
+
+  @override
+  String get pricePerNight => 'Price per night';
+
+  @override
+  String get breakfastIncluded => 'Breakfast Included';
+
+  @override
+  String get freeCancellation => 'Free Cancellation';
+
+  @override
+  String get bookNow => 'Book Now';
+
+  @override
+  String get select => 'Select';
+
+  @override
+  String get roomOnly => 'Room only';
+
+  @override
+  String get night => 'Night';
+
+  @override
+  String get nights => 'Nights';
+
+  @override
+  String forNightGuests(Object guests, Object nights) {
+    return 'for $nights Night, $guests Guests';
+  }
+
+  @override
+  String get includingTaxesFees => 'Including taxes & fees';
+
+  @override
+  String get chargesSummary => 'Charges Summary';
+
+  @override
+  String get roomCharges => 'Room Charges';
+
+  @override
+  String get taxesAndFees => 'Taxes & Fees';
+
+  @override
+  String get totalAmount => 'Total Amount';
+
+  @override
+  String get whereTo => 'Where to?';
+
+  @override
+  String get recentlySearchedCities => 'RECENTLY SEARCHED CITIES';
+
+  @override
+  String get popularCities => 'POPULAR CITIES';
+
+  @override
+  String get noCitiesFound => 'No cities found';
+
+  @override
+  String get typeAtLeastTwoChars => 'Type at least 2 characters to search';
+
+  @override
+  String get overview => 'Overview';
+
+  @override
+  String get location => 'Location';
+
+  @override
+  String get reviews => 'Reviews';
+
+  @override
+  String get facilities => 'Facilities';
+
+  @override
+  String get policies => 'Policies';
+
+  @override
+  String get seeAllRooms => 'See All Rooms';
+
+  @override
+  String get perNight => 'Per Night';
+
+  @override
+  String forNightsWithTaxes(Object nights) {
+    return 'for $nights nights with taxes and fees';
+  }
+
+  @override
+  String get perNightWithTaxes => 'per night with taxes and fees';
+
+  @override
+  String get exclusiveDeal => 'EXCLUSIVE DEAL';
+
+  @override
+  String get mobileOnlyPrice => 'Mobile-only price';
+
+  @override
+  String get guestReviews => 'Guest Reviews';
+
+  @override
+  String get noReviewsYet => 'No reviews yet from this property.';
+
+  @override
+  String get freeParking => 'Free Parking';
+
+  @override
+  String get parkingAvailable => 'Parking Available';
+
+  @override
+  String get nonSmokingRooms => 'Non-smoking Rooms';
+
+  @override
+  String get dryCleaning => 'Dry Cleaning';
+
+  @override
+  String get freeWifi => 'Free WiFi';
+
+  @override
+  String get airConditioning => 'Air Conditioning';
+
+  @override
+  String get tv => 'TV';
+
+  @override
+  String get breakfastAvailable => 'Breakfast Available';
+
+  @override
+  String get aboutThisProperty => 'About this Property';
+
+  @override
+  String get propertyPolicies => 'Property Policies';
+
+  @override
+  String get checkInTime => 'Check-in Time';
+
+  @override
+  String get checkOutTime => 'Check-out Time';
+
+  @override
+  String get nearbySimilarStays => 'Nearby Similar Stays';
+
+  @override
+  String get kmAway => 'km away';
+
+  @override
+  String get includesTaxesAndFees => 'Includes taxes and fees';
+
+  @override
+  String forNightsRange(Object nights) {
+    return 'For $nights night';
+  }
+
+  @override
+  String forMultipleNightsRange(Object nights) {
+    return 'For $nights nights';
+  }
+
+  @override
+  String get chooseRoom => 'Choose Room';
+
+  @override
+  String get enterPropertyName => 'Enter property name';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get typeHotelNameToSearch => 'Type a hotel name to start your search';
 }

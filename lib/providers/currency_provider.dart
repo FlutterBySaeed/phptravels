@@ -19,9 +19,6 @@ class Currency {
 
 class CurrencyProvider extends ChangeNotifier {
   static const String _currencyKey = 'app_currency';
-
-  // List of supported currencies with exchange rates (as of demo - use API for production)
-  // All rates are relative to PKR (Pakistani Rupee) as the base currency
   final List<Currency> _supportedCurrencies = [
     Currency(
         code: 'PKR', symbol: 'PKR', name: 'Pakistani Rupee', rateFromPKR: 1.0),

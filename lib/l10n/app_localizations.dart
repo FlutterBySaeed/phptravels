@@ -663,6 +663,414 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'New'**
   String get newLabel;
+
+  /// No description provided for @propertiesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'properties found'**
+  String get propertiesFound;
+
+  /// No description provided for @propertyFound.
+  ///
+  /// In en, this message translates to:
+  /// **'property found'**
+  String get propertyFound;
+
+  /// No description provided for @filters.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get filters;
+
+  /// No description provided for @propertyName.
+  ///
+  /// In en, this message translates to:
+  /// **'Property Name'**
+  String get propertyName;
+
+  /// No description provided for @recommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get recommended;
+
+  /// No description provided for @cheapest.
+  ///
+  /// In en, this message translates to:
+  /// **'Cheapest'**
+  String get cheapest;
+
+  /// No description provided for @priceRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Price Range'**
+  String get priceRange;
+
+  /// No description provided for @districtAreasHotels.
+  ///
+  /// In en, this message translates to:
+  /// **'District/Areas/Hotels'**
+  String get districtAreasHotels;
+
+  /// No description provided for @starRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Star Rating'**
+  String get starRating;
+
+  /// No description provided for @reviewScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Score'**
+  String get reviewScore;
+
+  /// No description provided for @listView.
+  ///
+  /// In en, this message translates to:
+  /// **'List View'**
+  String get listView;
+
+  /// No description provided for @mapView.
+  ///
+  /// In en, this message translates to:
+  /// **'Map View'**
+  String get mapView;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @failedToLoadHotels.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load hotels. Please try again.'**
+  String get failedToLoadHotels;
+
+  /// No description provided for @totalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Price'**
+  String get totalPrice;
+
+  /// No description provided for @pricePerNight.
+  ///
+  /// In en, this message translates to:
+  /// **'Price per night'**
+  String get pricePerNight;
+
+  /// No description provided for @breakfastIncluded.
+  ///
+  /// In en, this message translates to:
+  /// **'Breakfast Included'**
+  String get breakfastIncluded;
+
+  /// No description provided for @freeCancellation.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Cancellation'**
+  String get freeCancellation;
+
+  /// No description provided for @bookNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Now'**
+  String get bookNow;
+
+  /// No description provided for @select.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get select;
+
+  /// No description provided for @roomOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Room only'**
+  String get roomOnly;
+
+  /// No description provided for @night.
+  ///
+  /// In en, this message translates to:
+  /// **'Night'**
+  String get night;
+
+  /// No description provided for @nights.
+  ///
+  /// In en, this message translates to:
+  /// **'Nights'**
+  String get nights;
+
+  /// No description provided for @forNightGuests.
+  ///
+  /// In en, this message translates to:
+  /// **'for {nights} Night, {guests} Guests'**
+  String forNightGuests(Object guests, Object nights);
+
+  /// No description provided for @includingTaxesFees.
+  ///
+  /// In en, this message translates to:
+  /// **'Including taxes & fees'**
+  String get includingTaxesFees;
+
+  /// No description provided for @chargesSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Charges Summary'**
+  String get chargesSummary;
+
+  /// No description provided for @roomCharges.
+  ///
+  /// In en, this message translates to:
+  /// **'Room Charges'**
+  String get roomCharges;
+
+  /// No description provided for @taxesAndFees.
+  ///
+  /// In en, this message translates to:
+  /// **'Taxes & Fees'**
+  String get taxesAndFees;
+
+  /// No description provided for @totalAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Amount'**
+  String get totalAmount;
+
+  /// No description provided for @whereTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Where to?'**
+  String get whereTo;
+
+  /// No description provided for @recentlySearchedCities.
+  ///
+  /// In en, this message translates to:
+  /// **'RECENTLY SEARCHED CITIES'**
+  String get recentlySearchedCities;
+
+  /// No description provided for @popularCities.
+  ///
+  /// In en, this message translates to:
+  /// **'POPULAR CITIES'**
+  String get popularCities;
+
+  /// No description provided for @noCitiesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No cities found'**
+  String get noCitiesFound;
+
+  /// No description provided for @typeAtLeastTwoChars.
+  ///
+  /// In en, this message translates to:
+  /// **'Type at least 2 characters to search'**
+  String get typeAtLeastTwoChars;
+
+  /// No description provided for @overview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get overview;
+
+  /// No description provided for @location.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get location;
+
+  /// No description provided for @reviews.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get reviews;
+
+  /// No description provided for @facilities.
+  ///
+  /// In en, this message translates to:
+  /// **'Facilities'**
+  String get facilities;
+
+  /// No description provided for @policies.
+  ///
+  /// In en, this message translates to:
+  /// **'Policies'**
+  String get policies;
+
+  /// No description provided for @seeAllRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'See All Rooms'**
+  String get seeAllRooms;
+
+  /// No description provided for @perNight.
+  ///
+  /// In en, this message translates to:
+  /// **'Per Night'**
+  String get perNight;
+
+  /// No description provided for @forNightsWithTaxes.
+  ///
+  /// In en, this message translates to:
+  /// **'for {nights} nights with taxes and fees'**
+  String forNightsWithTaxes(Object nights);
+
+  /// No description provided for @perNightWithTaxes.
+  ///
+  /// In en, this message translates to:
+  /// **'per night with taxes and fees'**
+  String get perNightWithTaxes;
+
+  /// No description provided for @exclusiveDeal.
+  ///
+  /// In en, this message translates to:
+  /// **'EXCLUSIVE DEAL'**
+  String get exclusiveDeal;
+
+  /// No description provided for @mobileOnlyPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile-only price'**
+  String get mobileOnlyPrice;
+
+  /// No description provided for @guestReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest Reviews'**
+  String get guestReviews;
+
+  /// No description provided for @noReviewsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet from this property.'**
+  String get noReviewsYet;
+
+  /// No description provided for @freeParking.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Parking'**
+  String get freeParking;
+
+  /// No description provided for @parkingAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Parking Available'**
+  String get parkingAvailable;
+
+  /// No description provided for @nonSmokingRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-smoking Rooms'**
+  String get nonSmokingRooms;
+
+  /// No description provided for @dryCleaning.
+  ///
+  /// In en, this message translates to:
+  /// **'Dry Cleaning'**
+  String get dryCleaning;
+
+  /// No description provided for @freeWifi.
+  ///
+  /// In en, this message translates to:
+  /// **'Free WiFi'**
+  String get freeWifi;
+
+  /// No description provided for @airConditioning.
+  ///
+  /// In en, this message translates to:
+  /// **'Air Conditioning'**
+  String get airConditioning;
+
+  /// No description provided for @tv.
+  ///
+  /// In en, this message translates to:
+  /// **'TV'**
+  String get tv;
+
+  /// No description provided for @breakfastAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Breakfast Available'**
+  String get breakfastAvailable;
+
+  /// No description provided for @aboutThisProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'About this Property'**
+  String get aboutThisProperty;
+
+  /// No description provided for @propertyPolicies.
+  ///
+  /// In en, this message translates to:
+  /// **'Property Policies'**
+  String get propertyPolicies;
+
+  /// No description provided for @checkInTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in Time'**
+  String get checkInTime;
+
+  /// No description provided for @checkOutTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-out Time'**
+  String get checkOutTime;
+
+  /// No description provided for @nearbySimilarStays.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearby Similar Stays'**
+  String get nearbySimilarStays;
+
+  /// No description provided for @kmAway.
+  ///
+  /// In en, this message translates to:
+  /// **'km away'**
+  String get kmAway;
+
+  /// No description provided for @includesTaxesAndFees.
+  ///
+  /// In en, this message translates to:
+  /// **'Includes taxes and fees'**
+  String get includesTaxesAndFees;
+
+  /// No description provided for @forNightsRange.
+  ///
+  /// In en, this message translates to:
+  /// **'For {nights} night'**
+  String forNightsRange(Object nights);
+
+  /// No description provided for @forMultipleNightsRange.
+  ///
+  /// In en, this message translates to:
+  /// **'For {nights} nights'**
+  String forMultipleNightsRange(Object nights);
+
+  /// No description provided for @chooseRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Room'**
+  String get chooseRoom;
+
+  /// No description provided for @enterPropertyName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter property name'**
+  String get enterPropertyName;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @typeHotelNameToSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a hotel name to start your search'**
+  String get typeHotelNameToSearch;
 }
 
 class _AppLocalizationsDelegate

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:phptravels/SCREENS/navigation.dart';
+import 'package:phptravels/features/home/pages/main_navigation_page.dart';
 import 'package:phptravels/providers/theme_provider.dart';
 import 'package:phptravels/providers/language_provider.dart';
-import 'package:phptravels/THEMES/app_theme.dart';
+import 'package:phptravels/core/theme/app_theme.dart';
 import 'package:phptravels/l10n/app_localizations.dart';
 import 'package:phptravels/providers/currency_provider.dart';
 import 'package:phptravels/providers/search_provider.dart';
