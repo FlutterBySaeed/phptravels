@@ -39,6 +39,12 @@ class _FlightsResultsPageState extends State<FlightsResultsPage> {
   RangeValues _arriveTimeRange = const RangeValues(0, 24);
   bool _hideArrivalTime = false;
 
+  // Stops Filter
+  final Map<String, bool> _stopsFilters = {
+    '1 Stop': false,
+    '2+ Stops': false,
+  };
+
   // Mock Airline Filters
   final Map<String, bool> _airlineFilters = {
     'Airblue': false,
@@ -128,8 +134,8 @@ class _FlightsResultsPageState extends State<FlightsResultsPage> {
                             ),
                           )
                         : ListView.builder(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 8),
+                            padding: const EdgeInsets.only(
+                                left: 16, right: 16, bottom: 12),
                             itemCount: _flights.length,
                             itemBuilder: (context, index) {
                               return Padding(
@@ -159,13 +165,15 @@ class _FlightsResultsPageState extends State<FlightsResultsPage> {
         onPressed: () => Navigator.pop(context),
       ),
       title: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: Theme.of(context).dividerColor,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? AppColors.darkSurfaceLight
+              : AppColors.surfaceLight,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
@@ -221,7 +229,7 @@ class _FlightsResultsPageState extends State<FlightsResultsPage> {
 
   Widget _buildFilterBar(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 12),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
       ),
@@ -247,7 +255,7 @@ class _FlightsResultsPageState extends State<FlightsResultsPage> {
               context,
               label: 'Stops',
               hasDropdown: true,
-              onTap: () {},
+              onTap: () => _showStopsFilter(context),
             ),
             const SizedBox(width: 8),
             _buildFilterChip(
@@ -308,7 +316,7 @@ class _FlightsResultsPageState extends State<FlightsResultsPage> {
             if (label != null)
               Text(
                 label,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       fontSize: 10,
                     ),
@@ -356,15 +364,28 @@ class _FlightsResultsPageState extends State<FlightsResultsPage> {
             flex: 1,
             child: Align(
               alignment: Alignment.centerLeft,
-              child: _buildDropdownButton(
-                context,
-                value: _selectedPriceType,
-                options: ['Per Person\nIncl. fee', 'Total Price'],
-                onChanged: (newValue) {
-                  setState(() {
-                    _selectedPriceType = newValue!;
-                  });
-                },
+              child: GestureDetector(
+                onTap: () => _showPriceDisplayModal(context),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      _selectedPriceType.replaceAll('\n', ' '),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(width: 2),
+                    Icon(
+                      Icons.keyboard_arrow_down,
+                      size: 14,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -514,7 +535,7 @@ class _FlightsResultsPageState extends State<FlightsResultsPage> {
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.75,
         decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
+          color: Theme.of(context).cardColor,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
@@ -836,6 +857,99 @@ class _FlightsResultsPageState extends State<FlightsResultsPage> {
             },
           );
         },
+      ),
+    );
+  }
+
+  // 1.5 Stops Filter
+  void _showStopsFilter(BuildContext context) {
+    _showCustomBottomSheet(
+      context,
+      title: 'Stops',
+      onApply: () {
+        _applyFilters();
+      },
+      content: StatefulBuilder(
+        builder: (context, setSheetState) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'STOPS',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _buildStopOption(
+                  context,
+                  label: '1 Stop',
+                  isChecked: _stopsFilters['1 Stop'] ?? false,
+                  onChanged: (v) {
+                    setSheetState(() => _stopsFilters['1 Stop'] = v!);
+                    setState(() => _stopsFilters['1 Stop'] = v!);
+                    _applyFilters();
+                  },
+                ),
+                const SizedBox(height: 16),
+                _buildStopOption(
+                  context,
+                  label: '2+ Stops',
+                  isChecked: _stopsFilters['2+ Stops'] ?? false,
+                  onChanged: (v) {
+                    setSheetState(() => _stopsFilters['2+ Stops'] = v!);
+                    setState(() => _stopsFilters['2+ Stops'] = v!);
+                    _applyFilters();
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildStopOption(
+    BuildContext context, {
+    required String label,
+    required bool isChecked,
+    required ValueChanged<bool?> onChanged,
+  }) {
+    return InkWell(
+      onTap: () => onChanged(!isChecked),
+      child: Row(
+        children: [
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: isChecked ? AppColors.primaryBlue : Colors.grey[400]!,
+                width: 2,
+              ),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: isChecked
+                ? Icon(
+                    Icons.check,
+                    size: 18,
+                    color: AppColors.primaryBlue,
+                  )
+                : null,
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -1243,6 +1357,102 @@ class _FlightsResultsPageState extends State<FlightsResultsPage> {
         ),
         Text(price, style: TextStyle(fontSize: 14, color: Colors.grey[600])),
       ],
+    );
+  }
+
+  void _showPriceDisplayModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          padding:
+              const EdgeInsets.only(top: 16, bottom: 32, left: 16, right: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                  Text(
+                    'Show price as',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 18,
+                        ),
+                  ),
+                  const SizedBox(width: 48), // Balance the close button
+                ],
+              ),
+              const SizedBox(height: 24),
+              _buildPriceTypeOption(
+                context,
+                label: 'Per Person',
+                value: 'Per Person\nIncl. fee',
+              ),
+              const SizedBox(height: 24),
+              _buildPriceTypeOption(
+                context,
+                label: 'Total Price',
+                value: 'Total Price',
+              ),
+              SizedBox(height: MediaQuery.of(context).padding.bottom),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPriceTypeOption(
+    BuildContext context, {
+    required String label,
+    required String value,
+  }) {
+    final isSelected = _selectedPriceType == value;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedPriceType = value;
+        });
+        Navigator.pop(context);
+      },
+      child: Container(
+        color: Colors.transparent,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              label,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: isSelected
+                        ? AppColors.primaryBlue
+                        : Theme.of(context).textTheme.bodyLarge?.color,
+                  ),
+            ),
+            if (isSelected)
+              Icon(
+                Icons.check,
+                color: AppColors.primaryBlue,
+                size: 24,
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

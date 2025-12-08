@@ -506,4 +506,30 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get typeHotelNameToSearch =>
       'Escriba el nombre de un hotel para iniciar su búsqueda';
+
+  @override
+  String get reviewScoreTitle => 'Puntuación de Reseñas';
+
+  @override
+  String get poor => 'Pobre';
+
+  @override
+  String get fair => 'Regular';
+
+  @override
+  String get good => 'Bueno';
+
+  @override
+  String get veryGood => 'Muy Bueno';
+
+  @override
+  String get excellent => 'Excelente';
+
+  @override
+  String get clear => 'Limpiar';
+
+  @override
+  String showResults(Object count, Object total) {
+    return 'Mostrar $count de $total resultados';
+  }
 }

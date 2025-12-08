@@ -177,25 +177,21 @@ class _CustomDatePickerPageState extends State<CustomDatePickerPage> {
     if (cleanSelected.isBefore(cleanToday)) return;
 
     if (widget.tripType == TripType.roundTrip) {
-      // Original round trip logic
+      // Round trip logic
       if (_selectingDeparture) {
+        // Selecting departure date
         setState(() {
           _departureDate = cleanSelected;
-
-          // Clear return date if it's before or equal to new departure date
           if (_returnDate != null && !_returnDate!.isAfter(_departureDate)) {
             _returnDate = null;
           }
         });
-
-        // Auto-switch to return date selection only if return is empty
-        if (_returnDate == null) {
-          setState(() => _selectingDeparture = false);
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _scrollToSelectedMonth();
-          });
-        }
+        setState(() => _selectingDeparture = false);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollToSelectedMonth();
+        });
       } else {
+        // Selecting return date
         // Return date must be AFTER departure date
         if (!cleanSelected.isAfter(_departureDate)) return;
 
@@ -203,7 +199,7 @@ class _CustomDatePickerPageState extends State<CustomDatePickerPage> {
           _returnDate = cleanSelected;
         });
 
-        // Callback and close
+        // Callback and close after selecting return date
         widget.onDateSelected(_departureDate, _returnDate);
         Navigator.pop(context);
       }
@@ -338,40 +334,73 @@ class _CustomDatePickerPageState extends State<CustomDatePickerPage> {
               final isSelected = isDepartureSelected || isReturnSelected;
               final isInRange = _isDateInRange(cleanDay);
 
+              // Extension logic to create continuous bar:
+              // - Departure date: extend RIGHT only
+              // - In-between dates: extend BOTH sides
+              // - Return date: extend LEFT only
+              final bool extendLeft = isInRange || isReturnSelected;
+              final bool extendRight = isInRange || isDepartureSelected;
+
               return GestureDetector(
                 onTap: isSelectable ? () => _onDateSelected(day) : null,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? AppColors.primaryBlue
-                        : isInRange
-                            ? AppColors.primaryBlue.withOpacity(0.1)
-                            : Colors.transparent,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Center(
-                    child: Text(
-                      day.day.toString(),
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: isSelected
-                            ? AppColors.white
-                            : !isCurrentMonth
-                                ? Theme.of(context).textTheme.bodySmall?.color
-                                : !isSelectable
-                                    ? Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
-                                        ?.color
-                                    : Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.color,
-                        fontFamily: 'Inter',
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    // Background layer that extends to fill gaps
+                    if (isCurrentMonth && (isSelected || isInRange))
+                      Positioned.fill(
+                        left: extendLeft ? -4 : 0,
+                        right: extendRight ? -4 : 0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? AppColors.primaryBlue
+                                : AppColors.primaryBlue.withOpacity(0.1),
+                            borderRadius:
+                                isDepartureSelected && isReturnSelected
+                                    // Same day selection
+                                    ? BorderRadius.circular(8)
+                                    : isDepartureSelected
+                                        // Departure: rounded left only
+                                        ? const BorderRadius.only(
+                                            topLeft: Radius.circular(8),
+                                            bottomLeft: Radius.circular(8),
+                                          )
+                                        : isReturnSelected
+                                            // Return: rounded right only
+                                            ? const BorderRadius.only(
+                                                topRight: Radius.circular(8),
+                                                bottomRight: Radius.circular(8),
+                                              )
+                                            : BorderRadius.zero,
+                          ),
+                        ),
+                      ),
+                    // Text layer
+                    Center(
+                      child: Text(
+                        day.day.toString(),
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: !isCurrentMonth
+                              ? Colors.transparent
+                              : isSelected
+                                  ? AppColors.white
+                                  : !isSelectable
+                                      ? Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.color
+                                      : Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.color,
+                          fontFamily: 'Inter',
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               );
             },
@@ -413,6 +442,7 @@ class _CustomDatePickerPageState extends State<CustomDatePickerPage> {
                 children: [
                   Expanded(
                     child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () {
                         setState(() => _selectingDeparture = true);
                         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -450,6 +480,7 @@ class _CustomDatePickerPageState extends State<CustomDatePickerPage> {
                   ),
                   Expanded(
                     child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () {
                         setState(() => _selectingDeparture = false);
                         WidgetsBinding.instance.addPostFrameCallback((_) {

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:phptravels/core/services/airport_service.dart';
+import 'package:phptravels/core/services/search_history_model.dart';
+import 'package:phptravels/core/services/search_history_service.dart';
+import 'package:phptravels/core/theme/app_theme.dart';
 
 class DestinationSearchPage extends StatefulWidget {
   final Function(String destination, String city, String country)
@@ -15,6 +18,7 @@ class _DestinationSearchPageState extends State<DestinationSearchPage> {
   final FocusNode _searchFocus = FocusNode();
   List<Map<String, dynamic>> _searchResults = [];
   bool _isLoading = false;
+  List<Map<String, dynamic>> _recentAirports = [];
 
   // Popular cities to show when no search
   final List<Map<String, dynamic>> _popularCities = [
@@ -62,6 +66,47 @@ class _DestinationSearchPageState extends State<DestinationSearchPage> {
   void initState() {
     super.initState();
     _searchFocus.requestFocus();
+    _loadRecentAirports();
+  }
+
+  Future<void> _loadRecentAirports() async {
+    final flightSearches = await SearchHistoryService.getSearchHistory();
+
+    // Extract unique airports (from/to) from flight search history
+    final Map<String, Map<String, dynamic>> uniqueAirports = {};
+    for (var search in flightSearches) {
+      // Extract airport codes from "City (CODE)" format
+      final fromMatch = RegExp(r'\(([^)]+)\)$').firstMatch(search.from);
+      final toMatch = RegExp(r'\(([^)]+)\)$').firstMatch(search.to);
+
+      if (fromMatch != null) {
+        final code = fromMatch.group(1)!;
+        if (!uniqueAirports.containsKey(code)) {
+          uniqueAirports[code] = {
+            'city': search.from.replaceAll(RegExp(r'\s*\([^)]+\)$'), ''),
+            'country': '', // We don't have country in flight history
+            'code': code,
+            'loctype': 'city',
+          };
+        }
+      }
+
+      if (toMatch != null) {
+        final code = toMatch.group(1)!;
+        if (!uniqueAirports.containsKey(code)) {
+          uniqueAirports[code] = {
+            'city': search.to.replaceAll(RegExp(r'\s*\([^)]+\)$'), ''),
+            'country': '',
+            'code': code,
+            'loctype': 'city',
+          };
+        }
+      }
+    }
+
+    setState(() {
+      _recentAirports = uniqueAirports.values.toList().take(5).toList();
+    });
   }
 
   @override
@@ -132,6 +177,8 @@ class _DestinationSearchPageState extends State<DestinationSearchPage> {
                       ),
                   decoration: InputDecoration(
                     border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
                     hintText: 'Where to?',
                     hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontSize: 18,
@@ -155,7 +202,7 @@ class _DestinationSearchPageState extends State<DestinationSearchPage> {
           ),
         ),
         // Divider
-        Divider(height: 1, thickness: 1, color: Colors.grey[200]),
+        Divider(height: 1, thickness: 1, color: Theme.of(context).dividerColor),
         // Content
         Expanded(
           child: _buildContent(context),
@@ -172,7 +219,10 @@ class _DestinationSearchPageState extends State<DestinationSearchPage> {
 
     // Otherwise show popular cities
     return ListView(
-      padding: const EdgeInsets.symmetric(vertical: 16),
+      padding: EdgeInsets.only(
+        top: 16,
+        bottom: 16 + MediaQuery.of(context).padding.bottom,
+      ),
       children: [
         // Recently searched section (empty for now)
         Padding(
@@ -182,11 +232,18 @@ class _DestinationSearchPageState extends State<DestinationSearchPage> {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w700,
-              color: Colors.grey[800],
+              color: Theme.of(context).textTheme.bodySmall?.color,
               letterSpacing: 0.5,
             ),
           ),
         ),
+        // Recently searched airports from flight search history
+        if (_recentAirports.isNotEmpty) ...[
+          ..._recentAirports.map((airport) {
+            return _buildAirportItem(context, airport);
+          }),
+          const SizedBox(height: 8),
+        ],
         const SizedBox(height: 8),
         // Popular cities section
         Padding(
@@ -196,7 +253,7 @@ class _DestinationSearchPageState extends State<DestinationSearchPage> {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w700,
-              color: Colors.grey[800],
+              color: Theme.of(context).textTheme.bodySmall?.color,
               letterSpacing: 0.5,
             ),
           ),
@@ -298,6 +355,7 @@ class _DestinationSearchPageState extends State<DestinationSearchPage> {
     }
 
     return ListView(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       children: groupedResults,
     );
   }
@@ -330,7 +388,8 @@ class _DestinationSearchPageState extends State<DestinationSearchPage> {
                     child: Icon(
                       isAirport ? Icons.flight : Icons.location_on_outlined,
                       size: 22,
-                      color: Colors.grey[600],
+                      color:
+                          Theme.of(context).iconTheme.color?.withOpacity(0.6),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -355,7 +414,10 @@ class _DestinationSearchPageState extends State<DestinationSearchPage> {
                           airport['country'] ?? '',
                           style:
                               Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey[600],
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.color,
                                     fontSize: 12,
                                   ),
                         ),
@@ -368,16 +430,18 @@ class _DestinationSearchPageState extends State<DestinationSearchPage> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.grey[200],
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppColors.darkBorder
+                          : Colors.grey[200],
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
                       airport['code'] ?? '',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
-                            color: Colors.grey[700],
-                          ),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                      ),
                     ),
                   ),
                 ],
@@ -391,7 +455,7 @@ class _DestinationSearchPageState extends State<DestinationSearchPage> {
           child: Divider(
             height: 1,
             thickness: 0.3,
-            color: Colors.grey[200],
+            color: Theme.of(context).dividerColor,
           ),
         ),
       ],

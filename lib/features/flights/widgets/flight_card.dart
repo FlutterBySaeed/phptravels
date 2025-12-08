@@ -52,8 +52,13 @@ class FlightCard extends StatelessWidget {
           border: Border.all(color: Theme.of(context).dividerColor, width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.02),
-              blurRadius: 2,
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 4,
               offset: const Offset(0, 1),
             ),
           ],

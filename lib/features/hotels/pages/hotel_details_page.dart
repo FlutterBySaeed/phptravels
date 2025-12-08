@@ -479,7 +479,7 @@ class _HotelDetailsPageState extends State<HotelDetailsPage>
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
@@ -501,7 +501,7 @@ class _HotelDetailsPageState extends State<HotelDetailsPage>
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
@@ -888,7 +888,7 @@ class _HotelDetailsPageState extends State<HotelDetailsPage>
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      backgroundColor: Colors.white,
+                      backgroundColor: Theme.of(context).cardColor,
                     ),
                     child: Text(
                       AppLocalizations.of(context).seeAllRooms,
@@ -919,7 +919,7 @@ class _HotelDetailsPageState extends State<HotelDetailsPage>
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 5),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
+          color: isSelected ? Theme.of(context).cardColor : Colors.transparent,
           borderRadius: BorderRadius.circular(15),
           boxShadow: isSelected
               ? [

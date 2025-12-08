@@ -101,7 +101,7 @@ class _PassengerPickerBottomSheetState
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
+          color: Theme.of(context).cardColor,
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(24),
             bottomLeft: Radius.circular(24),

@@ -8,6 +8,8 @@ import 'package:intl/intl.dart' as intl;
 import 'app_localizations_ar.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
+import 'app_localizations_ur.dart';
 
 // ignore_for_file: type=lint
 
@@ -97,7 +99,9 @@ abstract class AppLocalizations {
   static const List<Locale> supportedLocales = <Locale>[
     Locale('ar'),
     Locale('en'),
-    Locale('es')
+    Locale('es'),
+    Locale('fr'),
+    Locale('ur')
   ];
 
   /// No description provided for @appTitle.
@@ -1071,6 +1075,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Type a hotel name to start your search'**
   String get typeHotelNameToSearch;
+
+  /// No description provided for @reviewScoreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Score'**
+  String get reviewScoreTitle;
+
+  /// No description provided for @poor.
+  ///
+  /// In en, this message translates to:
+  /// **'Poor'**
+  String get poor;
+
+  /// No description provided for @fair.
+  ///
+  /// In en, this message translates to:
+  /// **'Fair'**
+  String get fair;
+
+  /// No description provided for @good.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get good;
+
+  /// No description provided for @veryGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Very Good'**
+  String get veryGood;
+
+  /// No description provided for @excellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent'**
+  String get excellent;
+
+  /// No description provided for @clear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
+
+  /// No description provided for @showResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Show {count} of {total} results'**
+  String showResults(Object count, Object total);
 }
 
 class _AppLocalizationsDelegate
@@ -1084,7 +1136,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['ar', 'en', 'es'].contains(locale.languageCode);
+      <String>['ar', 'en', 'es', 'fr', 'ur'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -1099,6 +1151,10 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsEn();
     case 'es':
       return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
+    case 'ur':
+      return AppLocalizationsUr();
   }
 
   throw FlutterError(

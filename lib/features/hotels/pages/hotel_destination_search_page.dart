@@ -145,10 +145,12 @@ class _HotelDestinationSearchPageState
                       ),
                   decoration: InputDecoration(
                     border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
                     hintText: AppLocalizations.of(context).whereTo,
                     hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontSize: 18,
-                          color: Colors.grey[400],
+                          color: Theme.of(context).hintColor,
                           fontWeight: FontWeight.w400,
                         ),
                   ),
@@ -168,7 +170,7 @@ class _HotelDestinationSearchPageState
           ),
         ),
         // Divider
-        Divider(height: 1, thickness: 1, color: Colors.grey[200]),
+        Divider(height: 1, thickness: 1, color: Theme.of(context).dividerColor),
         // Content
         Expanded(
           child: _buildContent(context),
@@ -192,12 +194,11 @@ class _HotelDestinationSearchPageState
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
             AppLocalizations.of(context).recentlySearchedCities,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: Colors.grey[800],
-              letterSpacing: 0.5,
-            ),
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                ),
           ),
         ),
         // Recent destinations from hotel search history
@@ -212,12 +213,11 @@ class _HotelDestinationSearchPageState
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
             AppLocalizations.of(context).popularCities,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: Colors.grey[800],
-              letterSpacing: 0.5,
-            ),
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                ),
           ),
         ),
         ..._popularCities.map((city) => _buildCityItem(context, city)),
@@ -240,15 +240,15 @@ class _HotelDestinationSearchPageState
             Icon(
               Icons.location_city,
               size: 64,
-              color: Colors.grey[300],
+              color: Theme.of(context).disabledColor,
             ),
             const SizedBox(height: 16),
             Text(
               AppLocalizations.of(context).noCitiesFound,
-              style: TextStyle(
-                color: Colors.grey[500],
-                fontSize: 16,
-              ),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).hintColor,
+                    fontSize: 16,
+                  ),
             ),
           ],
         ),
@@ -263,15 +263,15 @@ class _HotelDestinationSearchPageState
             Icon(
               Icons.search,
               size: 64,
-              color: Colors.grey[300],
+              color: Theme.of(context).disabledColor,
             ),
             const SizedBox(height: 16),
             Text(
               AppLocalizations.of(context).typeAtLeastTwoChars,
-              style: TextStyle(
-                color: Colors.grey[500],
-                fontSize: 16,
-              ),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).hintColor,
+                    fontSize: 16,
+                  ),
             ),
           ],
         ),
@@ -306,7 +306,8 @@ class _HotelDestinationSearchPageState
                     child: Icon(
                       Icons.location_on_outlined,
                       size: 24,
-                      color: Colors.grey[600],
+                      color:
+                          Theme.of(context).iconTheme.color?.withOpacity(0.6),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -328,7 +329,6 @@ class _HotelDestinationSearchPageState
                           city['country'] ?? '',
                           style:
                               Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey[600],
                                     fontSize: 13,
                                   ),
                         ),
@@ -341,16 +341,17 @@ class _HotelDestinationSearchPageState
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         city['code'],
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey[600],
-                        ),
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
                       ),
                     ),
                 ],
@@ -361,7 +362,8 @@ class _HotelDestinationSearchPageState
         // Light divider between items
         Padding(
           padding: const EdgeInsets.only(left: 68),
-          child: Divider(height: 1, thickness: 0.5, color: Colors.grey[200]),
+          child: Divider(
+              height: 1, thickness: 0.5, color: Theme.of(context).dividerColor),
         ),
       ],
     );

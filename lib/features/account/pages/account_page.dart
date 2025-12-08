@@ -10,6 +10,7 @@ import 'package:phptravels/features/account/pages/display_settings_page.dart';
 import 'package:phptravels/features/account/pages/payment_methods_page.dart';
 import 'package:phptravels/features/account/pages/language_settings_page.dart';
 import 'package:phptravels/features/account/pages/currency_settings_page.dart';
+import 'package:phptravels/features/account/pages/login_webview_page.dart';
 import 'package:phptravels/core/theme/app_theme.dart';
 import 'package:phptravels/l10n/app_localizations.dart';
 
@@ -79,7 +80,7 @@ class _AccountsPageState extends State<AccountsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).cardColor,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -87,7 +88,7 @@ class _AccountsPageState extends State<AccountsPage> {
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
+                color: Theme.of(context).cardColor,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(15),
                   topRight: Radius.circular(15),
@@ -204,7 +205,14 @@ class _AccountsPageState extends State<AccountsPage> {
                         child: SizedBox(
                           width: 145,
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const LoginWebViewPage(),
+                                ),
+                              );
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
                                   const Color.fromARGB(91, 229, 231, 235),
@@ -245,15 +253,16 @@ class _AccountsPageState extends State<AccountsPage> {
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Container(
         height: 6,
-        color: Theme.of(context).dividerColor,
+        color: Colors.black,
       ),
     );
   }
 
   Widget _buildMyProfile(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+    return Container(
+      color: Theme.of(context).cardColor,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -282,8 +291,9 @@ class _AccountsPageState extends State<AccountsPage> {
 
   Widget _buildMyTrips(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+    return Container(
+      color: Theme.of(context).cardColor,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -310,8 +320,9 @@ class _AccountsPageState extends State<AccountsPage> {
 
   Widget _buildBusinessTravel(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+    return Container(
+      color: Theme.of(context).cardColor,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -408,8 +419,9 @@ class _AccountsPageState extends State<AccountsPage> {
     return Consumer2<LanguageProvider, CurrencyProvider>(
       builder: (context, languageProvider, currencyProvider, child) {
         final l10n = AppLocalizations.of(context);
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+        return Container(
+          color: Theme.of(context).cardColor,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -462,8 +474,9 @@ class _AccountsPageState extends State<AccountsPage> {
 
   Widget _buildHelpCenter(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+    return Container(
+      color: Theme.of(context).cardColor,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

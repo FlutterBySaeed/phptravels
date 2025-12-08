@@ -28,7 +28,11 @@ class TripTypeSelector extends StatelessWidget {
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 5),
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.lightBlue : Colors.transparent,
+                color: isSelected
+                    ? AppColors.lightBlue
+                    : (Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.darkSurface
+                        : Colors.transparent),
                 borderRadius: BorderRadius.circular(10),
                 border:
                     Border.all(color: Theme.of(context).dividerColor, width: 1),

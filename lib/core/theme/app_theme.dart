@@ -10,6 +10,7 @@ class AppColors {
   static const Color textPrimary = Color.fromARGB(255, 0, 0, 0);
   static const Color textSecondary = Color(0xFF6B7280);
   static const Color borderLight = Color(0xFFE5E7EB);
+  static const Color surfaceLight = Color(0xFFF5F5F5);
   static const Color successGreen = Color(0xFF22C55E);
 
   // Dark Theme Colors
@@ -21,6 +22,7 @@ class AppColors {
   static const Color darkTextSecondary =
       Color(0xFFA1A1AA); // Light gray for secondary text
   static const Color darkBorder = Color(0xFF3F3F46);
+  static const Color darkSurfaceLight = Color(0xFF1A1A1A);
   static const Color darkError = Color(0xFFEF4444);
 }
 
@@ -187,6 +189,7 @@ class AppThemes {
       brightness: Brightness.dark,
       primaryColor: AppColors.primaryBlue,
       scaffoldBackgroundColor: AppColors.darkBg,
+      cardColor: AppColors.darkSurface,
       dividerColor: AppColors.darkBorder, // Consistent dark divider color
       colorScheme: const ColorScheme.dark(
         primary: AppColors.primaryBlue,
@@ -291,6 +294,10 @@ class AppThemes {
         color: AppColors.darkBorder,
         thickness: 1,
         space: 0,
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: AppColors.darkSurface,
+        modalBackgroundColor: AppColors.darkSurface,
       ),
     );
   }

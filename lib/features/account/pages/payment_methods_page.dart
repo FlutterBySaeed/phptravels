@@ -20,29 +20,84 @@ class PaymentPickerBottomSheet extends StatefulWidget {
   const PaymentPickerBottomSheet({super.key});
 
   @override
-  State<PaymentPickerBottomSheet> createState() => _PaymentPickerBottomSheetState();
+  State<PaymentPickerBottomSheet> createState() =>
+      _PaymentPickerBottomSheetState();
 }
 
 class _PaymentPickerBottomSheetState extends State<PaymentPickerBottomSheet> {
   final TextEditingController _searchController = TextEditingController();
   bool _showAll = false;
-  
+
   final List<PaymentMethod> _allPaymentMethods = [
-    PaymentMethod(id: 'mastercard', name: 'MasterCard Credit', icon: Icons.credit_card, isSelected: true),
-    PaymentMethod(id: 'visa', name: 'Visa Credit', icon: Icons.credit_card, isSelected: true),
-    PaymentMethod(id: 'easypaisa', name: 'Easypaisa', icon: Icons.smartphone, isSelected: true),
-    PaymentMethod(id: 'payfast', name: 'PayFast', icon: Icons.payment, isSelected: true),
-    PaymentMethod(id: 'amex', name: 'American Express', icon: Icons.credit_card, isSelected: false),
-    PaymentMethod(id: 'Bank', name: 'Bank Transfer', icon: Icons.payment, isSelected: false),
-    PaymentMethod(id: 'Diners', name: 'Diners Club', icon: Icons.payment, isSelected: false),
-    PaymentMethod(id: 'mastercs', name: 'MasterCard Cirrus', icon: Icons.account_balance_wallet, isSelected: false),
-    PaymentMethod(id: 'MasterDebit', name: 'MasterCard Debit', icon: Icons.account_balance_wallet, isSelected: false),
-    PaymentMethod(id: 'paypal', name: 'PayPal', icon: Icons.payment, isSelected: false),
-    PaymentMethod(id: 'VisaBeb', name: 'Visa Debit', icon: Icons.payment, isSelected: false),
-    PaymentMethod(id: 'cash', name: 'Cash Payment', icon: Icons.account_balance_wallet, isSelected: false),
-    PaymentMethod(id: 'WesternUnion', name: 'Western Union', icon: Icons.account_balance_wallet, isSelected: false),
-    PaymentMethod(id: 'Bitcoin', name: 'Bitcoin', icon: Icons.account_balance_wallet, isSelected: false),
-    PaymentMethod(id: 'CardInstallments', name: 'Card Installments', icon: Icons.account_balance_wallet, isSelected: false),
+    PaymentMethod(
+        id: 'mastercard',
+        name: 'MasterCard Credit',
+        icon: Icons.credit_card,
+        isSelected: true),
+    PaymentMethod(
+        id: 'visa',
+        name: 'Visa Credit',
+        icon: Icons.credit_card,
+        isSelected: true),
+    PaymentMethod(
+        id: 'easypaisa',
+        name: 'Easypaisa',
+        icon: Icons.smartphone,
+        isSelected: true),
+    PaymentMethod(
+        id: 'payfast', name: 'PayFast', icon: Icons.payment, isSelected: true),
+    PaymentMethod(
+        id: 'amex',
+        name: 'American Express',
+        icon: Icons.credit_card,
+        isSelected: false),
+    PaymentMethod(
+        id: 'Bank',
+        name: 'Bank Transfer',
+        icon: Icons.payment,
+        isSelected: false),
+    PaymentMethod(
+        id: 'Diners',
+        name: 'Diners Club',
+        icon: Icons.payment,
+        isSelected: false),
+    PaymentMethod(
+        id: 'mastercs',
+        name: 'MasterCard Cirrus',
+        icon: Icons.account_balance_wallet,
+        isSelected: false),
+    PaymentMethod(
+        id: 'MasterDebit',
+        name: 'MasterCard Debit',
+        icon: Icons.account_balance_wallet,
+        isSelected: false),
+    PaymentMethod(
+        id: 'paypal', name: 'PayPal', icon: Icons.payment, isSelected: false),
+    PaymentMethod(
+        id: 'VisaBeb',
+        name: 'Visa Debit',
+        icon: Icons.payment,
+        isSelected: false),
+    PaymentMethod(
+        id: 'cash',
+        name: 'Cash Payment',
+        icon: Icons.account_balance_wallet,
+        isSelected: false),
+    PaymentMethod(
+        id: 'WesternUnion',
+        name: 'Western Union',
+        icon: Icons.account_balance_wallet,
+        isSelected: false),
+    PaymentMethod(
+        id: 'Bitcoin',
+        name: 'Bitcoin',
+        icon: Icons.account_balance_wallet,
+        isSelected: false),
+    PaymentMethod(
+        id: 'CardInstallments',
+        name: 'Card Installments',
+        icon: Icons.account_balance_wallet,
+        isSelected: false),
   ];
 
   late List<PaymentMethod> _filteredMethods;
@@ -67,7 +122,8 @@ class _PaymentPickerBottomSheetState extends State<PaymentPickerBottomSheet> {
         _showAll = false;
       } else {
         _filteredMethods = _allPaymentMethods
-            .where((method) => method.name.toLowerCase().contains(query.toLowerCase()))
+            .where((method) =>
+                method.name.toLowerCase().contains(query.toLowerCase()))
             .toList();
       }
     });
@@ -93,10 +149,10 @@ class _PaymentPickerBottomSheetState extends State<PaymentPickerBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: Theme.of(context).cardColor,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(24),
           topRight: Radius.circular(24),
@@ -117,8 +173,8 @@ class _PaymentPickerBottomSheetState extends State<PaymentPickerBottomSheet> {
                     child: Text(
                       l10n.paymentMethodsInfo,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        height: 1.4,
-                      ),
+                            height: 1.4,
+                          ),
                     ),
                   ),
                   _buildPaymentMethodsList(context, l10n),
@@ -132,7 +188,9 @@ class _PaymentPickerBottomSheetState extends State<PaymentPickerBottomSheet> {
   }
 
   Widget _buildPaymentMethodsList(BuildContext context, AppLocalizations l10n) {
-    final itemsToShow = _showAll ? _filteredMethods.length : _initialDisplayCount.clamp(0, _filteredMethods.length);
+    final itemsToShow = _showAll
+        ? _filteredMethods.length
+        : _initialDisplayCount.clamp(0, _filteredMethods.length);
     final visibleMethods = _filteredMethods.take(itemsToShow).toList();
     final hasMoreItems = _filteredMethods.length > _initialDisplayCount;
 
@@ -161,9 +219,9 @@ class _PaymentPickerBottomSheetState extends State<PaymentPickerBottomSheet> {
               Text(
                 _showAll ? l10n.showLess : l10n.showMore,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  decoration: TextDecoration.underline,
-                ),
+                      fontWeight: FontWeight.w600,
+                      decoration: TextDecoration.underline,
+                    ),
               ),
               const SizedBox(width: 6),
               Icon(
@@ -182,7 +240,9 @@ class _PaymentPickerBottomSheetState extends State<PaymentPickerBottomSheet> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1)),
+        border: Border(
+            bottom:
+                BorderSide(color: Theme.of(context).dividerColor, width: 1)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -190,7 +250,9 @@ class _PaymentPickerBottomSheetState extends State<PaymentPickerBottomSheet> {
           SizedBox(
             width: 40,
             child: IconButton(
-              icon: Icon(Icons.arrow_back, size: 20, color: Theme.of(context).textTheme.bodyMedium?.color),
+              icon: Icon(Icons.arrow_back,
+                  size: 20,
+                  color: Theme.of(context).textTheme.bodyMedium?.color),
               onPressed: () => Navigator.pop(context),
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
@@ -199,13 +261,15 @@ class _PaymentPickerBottomSheetState extends State<PaymentPickerBottomSheet> {
           Text(
             l10n.paymentMethods,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
+                  fontWeight: FontWeight.w700,
+                ),
           ),
           SizedBox(
             width: 40,
             child: IconButton(
-              icon: Icon(Icons.check, size: 20, color: Theme.of(context).textTheme.bodyMedium?.color),
+              icon: Icon(Icons.check,
+                  size: 20,
+                  color: Theme.of(context).textTheme.bodyMedium?.color),
               onPressed: _applyChanges,
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
@@ -236,8 +300,8 @@ class _PaymentPickerBottomSheetState extends State<PaymentPickerBottomSheet> {
                 controller: _searchController,
                 textAlignVertical: TextAlignVertical.top,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
+                      fontWeight: FontWeight.w500,
+                    ),
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: l10n.searchPaymentType,
@@ -257,7 +321,8 @@ class _PaymentPickerBottomSheetState extends State<PaymentPickerBottomSheet> {
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(right: 8),
-                  child: Icon(Icons.close, size: 16, color: Theme.of(context).hintColor),
+                  child: Icon(Icons.close,
+                      size: 16, color: Theme.of(context).hintColor),
                 ),
               ),
           ],
@@ -279,9 +344,13 @@ class _PaymentPickerBottomSheetState extends State<PaymentPickerBottomSheet> {
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(
-                  color: method.isSelected ? AppColors.primaryBlue : Colors.transparent,
+                  color: method.isSelected
+                      ? AppColors.primaryBlue
+                      : Colors.transparent,
                   border: Border.all(
-                    color: method.isSelected ? AppColors.primaryBlue : Theme.of(context).dividerColor,
+                    color: method.isSelected
+                        ? AppColors.primaryBlue
+                        : Theme.of(context).dividerColor,
                     width: 1.5,
                   ),
                   borderRadius: BorderRadius.circular(3),
@@ -295,11 +364,13 @@ class _PaymentPickerBottomSheetState extends State<PaymentPickerBottomSheet> {
                 child: Text(
                   method.name,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+                        fontWeight: FontWeight.w500,
+                      ),
                 ),
               ),
-              Icon(method.icon, size: 20, color: Theme.of(context).textTheme.bodyMedium?.color),
+              Icon(method.icon,
+                  size: 20,
+                  color: Theme.of(context).textTheme.bodyMedium?.color),
             ],
           ),
         ),

@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LanguageProvider extends ChangeNotifier {
   static const String _languageKey = 'app_language';
   static const String _countryKey = 'app_country';
-  
+
   Locale _currentLocale = const Locale('en', 'US');
   late SharedPreferences _prefs;
 
@@ -21,6 +21,12 @@ class LanguageProvider extends ChangeNotifier {
     'ar': {
       'SA': 'العربية (المملكة العربية السعودية)',
       'EG': 'العربية (مصر)',
+    },
+    'fr': {
+      'FR': 'Français (France)',
+    },
+    'ur': {
+      'PK': 'اردو (پاکستان)',
     },
   };
 
@@ -44,12 +50,14 @@ class LanguageProvider extends ChangeNotifier {
     if (countryCode != null && countryCode.isNotEmpty) {
       return supportedLocales[languageCode]?[countryCode] ?? languageCode;
     }
-    return supportedLocales[languageCode]?.values.first.split(' ')[0] ?? languageCode;
+    return supportedLocales[languageCode]?.values.first.split(' ')[0] ??
+        languageCode;
   }
 
   // Get current locale display name
   String get currentLocaleDisplayName {
-    return getDisplayName(_currentLocale.languageCode, _currentLocale.countryCode);
+    return getDisplayName(
+        _currentLocale.languageCode, _currentLocale.countryCode);
   }
 
   // Get all available languages
@@ -71,12 +79,12 @@ class LanguageProvider extends ChangeNotifier {
   Future<void> setLanguage(String languageCode, [String? countryCode]) async {
     // If no country code is provided, use the first available one for the language
     countryCode ??= supportedLocales[languageCode]?.keys.first;
-    
-    if (languageCode == _currentLocale.languageCode && 
+
+    if (languageCode == _currentLocale.languageCode &&
         countryCode == _currentLocale.countryCode) {
       return; // No change needed
     }
-    
+
     _currentLocale = Locale(languageCode, countryCode);
     await _prefs.setString(_languageKey, languageCode);
     await _prefs.setString(_countryKey, countryCode ?? '');

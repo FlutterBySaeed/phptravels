@@ -25,6 +25,8 @@ class _LanguageSettingsSheetState extends State<LanguageSettingsSheet> {
     {'name': 'English', 'code': 'en', 'displayCode': 'EN'},
     {'name': 'Español', 'code': 'es', 'displayCode': 'ES'},
     {'name': 'العربية', 'code': 'ar', 'displayCode': 'AR'},
+    {'name': 'Français', 'code': 'fr', 'displayCode': 'FR'},
+    {'name': 'اردو', 'code': 'ur', 'displayCode': 'UR'},
   ];
 
   @override
@@ -59,7 +61,7 @@ class _LanguageSettingsSheetState extends State<LanguageSettingsSheet> {
     final l10n = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: Theme.of(context).cardColor,
         borderRadius: const BorderRadius.vertical(
           top: Radius.circular(24),
         ),

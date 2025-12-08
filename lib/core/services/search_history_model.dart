@@ -83,10 +83,8 @@ class FlightSearchHistory {
 
   String get displayRoute {
     if (tripType == 'multiCity' && segments != null && segments!.isNotEmpty) {
-      if (segments!.length > 2) {
-        return '${segments!.first['from']} → ${segments!.first['to']} +${segments!.length - 1}';
-      }
-      return segments!.map((s) => '${s['from']} → ${s['to']}').join(', ');
+      // Show each segment on a new line with arrow
+      return segments!.map((s) => '${s['from']} → ${s['to']}').join('\n');
     }
     return '$from → $to';
   }

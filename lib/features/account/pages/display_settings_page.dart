@@ -15,7 +15,7 @@ class DisplaySettingsSheet extends StatelessWidget {
         final l10n = AppLocalizations.of(context);
         return Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
+            color: Theme.of(context).cardColor,
             borderRadius: const BorderRadius.vertical(
               top: Radius.circular(24),
             ),

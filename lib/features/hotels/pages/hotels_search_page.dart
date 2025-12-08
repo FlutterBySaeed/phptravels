@@ -61,7 +61,7 @@ class _HotelsSearchPageState extends State<HotelsSearchPage> {
         maxChildSize: 0.98,
         builder: (_, controller) => Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
+            color: Theme.of(context).cardColor,
             borderRadius: const BorderRadius.vertical(
               top: Radius.circular(20),
             ),
@@ -116,7 +116,7 @@ class _HotelsSearchPageState extends State<HotelsSearchPage> {
         maxChildSize: 0.95,
         builder: (_, controller) => Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
+            color: Theme.of(context).cardColor,
             borderRadius: const BorderRadius.vertical(
               top: Radius.circular(20),
             ),

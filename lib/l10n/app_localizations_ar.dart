@@ -503,5 +503,31 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cancel => 'إلغاء';
 
   @override
-  String get typeHotelNameToSearch => 'اكتب اسم فندق لبدء بحثك';
+  String get typeHotelNameToSearch => 'اكتب اسم الفندق لبدء البحث';
+
+  @override
+  String get reviewScoreTitle => 'تقييم المراجعات';
+
+  @override
+  String get poor => 'ضعيف';
+
+  @override
+  String get fair => 'مقبول';
+
+  @override
+  String get good => 'جيد';
+
+  @override
+  String get veryGood => 'جيد جدًا';
+
+  @override
+  String get excellent => 'ممتاز';
+
+  @override
+  String get clear => 'مسح';
+
+  @override
+  String showResults(Object count, Object total) {
+    return 'عرض $count من $total نتيجة';
+  }
 }

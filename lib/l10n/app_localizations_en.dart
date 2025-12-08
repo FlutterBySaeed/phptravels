@@ -504,4 +504,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get typeHotelNameToSearch => 'Type a hotel name to start your search';
+
+  @override
+  String get reviewScoreTitle => 'Review Score';
+
+  @override
+  String get poor => 'Poor';
+
+  @override
+  String get fair => 'Fair';
+
+  @override
+  String get good => 'Good';
+
+  @override
+  String get veryGood => 'Very Good';
+
+  @override
+  String get excellent => 'Excellent';
+
+  @override
+  String get clear => 'Clear';
+
+  @override
+  String showResults(Object count, Object total) {
+    return 'Show $count of $total results';
+  }
 }

@@ -3,6 +3,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:phptravels/core/theme/app_theme.dart';
 import 'package:intl/intl.dart';
 import 'package:phptravels/l10n/app_localizations.dart';
+import 'package:phptravels/features/hotels/pages/hotel_booking_page.dart';
 
 class RoomSelectionPage extends StatefulWidget {
   final String hotelName;
@@ -43,12 +44,13 @@ class _RoomSelectionPageState extends State<RoomSelectionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).cardColor,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon:
+              Icon(Icons.arrow_back, color: Theme.of(context).iconTheme.color),
           onPressed: () => Navigator.pop(context),
         ),
         title: Column(
@@ -56,8 +58,8 @@ class _RoomSelectionPageState extends State<RoomSelectionPage> {
           children: [
             Text(
               widget.hotelName,
-              style: const TextStyle(
-                color: Colors.black,
+              style: TextStyle(
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
@@ -76,7 +78,7 @@ class _RoomSelectionPageState extends State<RoomSelectionPage> {
         children: [
           // Filter pills
           Container(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -175,7 +177,7 @@ class _RoomSelectionPageState extends State<RoomSelectionPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: isSelected ? Colors.white : Colors.transparent,
+        color: isSelected ? Theme.of(context).cardColor : Colors.transparent,
         border: Border.all(
           color: isSelected ? AppColors.primaryBlue : Colors.grey[300]!,
           width: 1,
@@ -209,7 +211,7 @@ class _RoomSelectionPageState extends State<RoomSelectionPage> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -494,7 +496,32 @@ class _RoomSelectionPageState extends State<RoomSelectionPage> {
                             ),
                             const SizedBox(width: 16),
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => HotelBookingPage(
+                                      hotelName: widget.hotelName,
+                                      hotelLocation:
+                                          'Abu Dhabi, United Arab Emirates',
+                                      hotelImage:
+                                          'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
+                                      rating: 8.7,
+                                      checkInDate: DateFormat('dd MMM yyyy')
+                                          .format(widget.checkInDate),
+                                      checkOutDate: DateFormat('dd MMM yyyy')
+                                          .format(widget.checkOutDate),
+                                      totalNights: _nights,
+                                      roomType: roomName,
+                                      adults: widget.guests,
+                                      mealPlan: selectedOptionData.name,
+                                      isRefundable: true,
+                                      totalPrice:
+                                          selectedOptionData.price.toDouble(),
+                                    ),
+                                  ),
+                                );
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primaryBlue,
                                 foregroundColor: Colors.white,
@@ -668,7 +695,32 @@ class _RoomSelectionPageState extends State<RoomSelectionPage> {
                               )
                             else
                               ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => HotelBookingPage(
+                                        hotelName: widget.hotelName,
+                                        hotelLocation:
+                                            'Abu Dhabi, United Arab Emirates',
+                                        hotelImage:
+                                            'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
+                                        rating: 8.7,
+                                        checkInDate: DateFormat('dd MMM yyyy')
+                                            .format(widget.checkInDate),
+                                        checkOutDate: DateFormat('dd MMM yyyy')
+                                            .format(widget.checkOutDate),
+                                        totalNights: _nights,
+                                        roomType: roomName,
+                                        adults: widget.guests,
+                                        mealPlan: selectedOptionData.name,
+                                        isRefundable: true,
+                                        totalPrice:
+                                            selectedOptionData.price.toDouble(),
+                                      ),
+                                    ),
+                                  );
+                                },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.primaryBlue,
                                   foregroundColor: Colors.white,
@@ -766,8 +818,8 @@ class _RoomSelectionPageState extends State<RoomSelectionPage> {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         padding: const EdgeInsets.all(20),
@@ -901,8 +953,8 @@ class _RoomSelectionPageState extends State<RoomSelectionPage> {
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         padding: const EdgeInsets.all(24),

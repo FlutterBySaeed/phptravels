@@ -33,7 +33,7 @@ class _CurrencySettingsSheetState extends State<CurrencySettingsSheet> {
 
         return Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
+            color: Theme.of(context).cardColor,
             borderRadius: const BorderRadius.vertical(
               top: Radius.circular(24),
             ),
