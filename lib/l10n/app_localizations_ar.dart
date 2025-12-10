@@ -167,7 +167,13 @@ class AppLocalizationsAr extends AppLocalizations {
       'هل أنت مستعد لبدء مغامرتك التالية؟\nقم بتسجيل الدخول للحجز بشكل أسرع';
 
   @override
-  String get signUpLogin => 'إنشاء حساب / تسجيل الدخول';
+  String get signUpLogin => 'Sign up / Log in';
+
+  @override
+  String get login => 'تسجيل الدخول';
+
+  @override
+  String get signUp => 'إنشاء حساب';
 
   @override
   String get businessTravelDescription =>

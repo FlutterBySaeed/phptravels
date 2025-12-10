@@ -171,5 +171,7 @@
   "veryGood": "بہت اچھا",
   "excellent": "بہترین",
   "clear": "صاف کریں",
-  "showResults": "{total} میں سے {count} نتائج دکھائیں"
+  "showResults": "{total} میں سے {count} نتائج دکھائیں",
+  "signup": "سائن اپ",
+  "login": "لاگ ان"
 }

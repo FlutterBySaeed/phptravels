@@ -40,18 +40,22 @@ class NavBar extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem(BuildContext context, String label, IconData icon, int index) {
+  Widget _buildNavItem(
+      BuildContext context, String label, IconData icon, int index) {
     bool isSelected = selectedIndex == index;
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () {
-        onTap(index); 
+        onTap(index);
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             _getOutlinedIcon(icon),
-            color: isSelected ? AppColors.primaryBlue : Theme.of(context).textTheme.bodySmall?.color,
+            color: isSelected
+                ? AppColors.primaryBlue
+                : Theme.of(context).textTheme.bodySmall?.color,
             size: 24,
           ),
           const SizedBox(height: 4),
@@ -59,7 +63,9 @@ class NavBar extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 12,
-              color: isSelected ? AppColors.primaryBlue : Theme.of(context).textTheme.bodySmall?.color,
+              color: isSelected
+                  ? AppColors.primaryBlue
+                  : Theme.of(context).textTheme.bodySmall?.color,
             ),
           ),
         ],

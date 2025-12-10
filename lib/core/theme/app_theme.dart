@@ -12,6 +12,7 @@ class AppColors {
   static const Color borderLight = Color(0xFFE5E7EB);
   static const Color surfaceLight = Color(0xFFF5F5F5);
   static const Color successGreen = Color(0xFF22C55E);
+  static const Color errorRed = Color(0xFFEF4444);
 
   // Dark Theme Colors
   static const Color darkBg = Color.fromARGB(255, 0, 0, 0);

@@ -7,6 +7,8 @@ import 'package:phptravels/core/theme/app_theme.dart';
 import 'package:phptravels/l10n/app_localizations.dart';
 import 'package:phptravels/providers/currency_provider.dart';
 import 'package:phptravels/providers/search_provider.dart';
+import 'package:phptravels/providers/auth_provider.dart';
+import 'package:phptravels/core/services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +18,10 @@ void main() async {
 
   final currencyProvider = CurrencyProvider();
   await currencyProvider.init();
+
+  await ApiService.setAccessToken(
+    '28968108392a87be8d5867294f223fab974234b8d0526a0e3b93eff3481909a0',
+  );
 
   runApp(
     MultiProvider(
@@ -31,6 +37,9 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (context) => SearchProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => AuthProvider()..initialize(),
         ),
       ],
       child: const PHPTRAVELS(),

@@ -170,6 +170,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signUpLogin => 'Sign up / Log in';
 
   @override
+  String get login => 'Login';
+
+  @override
+  String get signUp => 'Sign up';
+
+  @override
   String get businessTravelDescription =>
       'Sign up for free on PHPTRAVELS and enjoy\nexclusive savings on your corporate travel\nplans!';
 

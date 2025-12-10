@@ -317,5 +317,7 @@
   "veryGood": "Muy Bueno",
   "excellent": "Excelente",
   "clear": "Limpiar",
-  "showResults": "Mostrar {count} de {total} resultados"
+  "showResults": "Mostrar {count} de {total} resultados",
+  "signUp": "Registrarse",
+  "login": "Iniciar Sesión"
 }

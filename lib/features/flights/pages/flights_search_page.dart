@@ -565,8 +565,6 @@ class OneWayForm extends StatelessWidget {
                 passengers: passengers,
                 cabinClass: cabinClass,
                 onTap: () => _showPassengerPicker(context)),
-            const _Divider(),
-            const PaymentSection(),
           ],
         ),
         PositionedDirectional(
@@ -679,8 +677,6 @@ class RoundTripForm extends StatelessWidget {
                 passengers: passengers,
                 cabinClass: cabinClass,
                 onTap: () => _showPassengerPicker(context)),
-            const _Divider(),
-            const PaymentSection(),
           ],
         ),
         PositionedDirectional(
@@ -807,8 +803,6 @@ class _MultiCityFormState extends State<MultiCityForm> {
             passengers: widget.passengers,
             cabinClass: widget.cabinClass,
             onTap: () => _showPassengerPicker(context)),
-        const _Divider(),
-        const PaymentSection(),
       ],
     );
   }

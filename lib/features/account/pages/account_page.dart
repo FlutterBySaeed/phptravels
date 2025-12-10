@@ -6,11 +6,13 @@ import 'package:provider/provider.dart';
 import 'package:phptravels/providers/theme_provider.dart';
 import 'package:phptravels/providers/language_provider.dart';
 import 'package:phptravels/providers/currency_provider.dart';
+import 'package:phptravels/providers/auth_provider.dart';
 import 'package:phptravels/features/account/pages/display_settings_page.dart';
 import 'package:phptravels/features/account/pages/payment_methods_page.dart';
 import 'package:phptravels/features/account/pages/language_settings_page.dart';
 import 'package:phptravels/features/account/pages/currency_settings_page.dart';
-import 'package:phptravels/features/account/pages/login_webview_page.dart';
+import 'package:phptravels/features/account/pages/login_page.dart';
+import 'package:phptravels/features/account/pages/signup_page.dart';
 import 'package:phptravels/core/theme/app_theme.dart';
 import 'package:phptravels/l10n/app_localizations.dart';
 
@@ -79,44 +81,146 @@ class _AccountsPageState extends State<AccountsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).cardColor,
-      body: SingleChildScrollView(
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, _) {
+        return Scaffold(
+          backgroundColor: Theme.of(context).cardColor,
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildLoginPrompt(authProvider),
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(15),
+                      topRight: Radius.circular(15),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 16),
+                      _buildMyProfile(context),
+                      _buildDivider(context),
+                      _buildMyTrips(context),
+                      _buildDivider(context),
+                      _buildBusinessTravel(context),
+                      _buildDivider(context),
+                      _buildSettings(context),
+                      _buildDivider(context),
+                      _buildHelpCenter(context),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLoginPrompt(AuthProvider authProvider) {
+    if (authProvider.isAuthenticated && authProvider.user != null) {
+      final user = authProvider.user!;
+      final name = user['name']?.toString() ?? 'Traveler';
+      final email = user['email']?.toString() ?? '';
+
+      return Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [AppColors.primaryBlue, AppColors.darkBlue],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        padding: const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 24),
         child: Column(
           children: [
-            _buildLoginPrompt(),
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(15),
-                  topRight: Radius.circular(15),
+            CircleAvatar(
+              radius: 28,
+              backgroundColor: AppColors.white.withOpacity(0.9),
+              child: Text(
+                name.isNotEmpty ? name[0].toUpperCase() : 'U',
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primaryBlue,
                 ),
               ),
-              child: Column(
-                children: [
-                  const SizedBox(height: 16),
-                  _buildMyProfile(context),
-                  _buildDivider(context),
-                  _buildMyTrips(context),
-                  _buildDivider(context),
-                  _buildBusinessTravel(context),
-                  _buildDivider(context),
-                  _buildSettings(context),
-                  _buildDivider(context),
-                  _buildHelpCenter(context),
-                  const SizedBox(height: 24),
-                ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Hi, $name!',
+              style: const TextStyle(
+                color: AppColors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            if (email.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(
+                email,
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+            const SizedBox(height: 16),
+            SizedBox(
+              width: 140,
+              height: 40,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.white,
+                  foregroundColor: AppColors.primaryBlue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 0,
+                ),
+                onPressed: authProvider.isLoading
+                    ? null
+                    : () async {
+                        await authProvider.logout();
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Logged out'),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
+                      },
+                child: authProvider.isLoading
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.primaryBlue,
+                        ),
+                      )
+                    : const Text(
+                        'Logout',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
+      );
+    }
 
-  Widget _buildLoginPrompt() {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
@@ -202,39 +306,77 @@ class _AccountsPageState extends State<AccountsPage> {
                     Center(
                       child: Transform.scale(
                         scale: 0.85,
-                        child: SizedBox(
-                          width: 145,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const LoginWebViewPage(),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              width: 120,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => const LoginPage(),
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      const Color.fromARGB(91, 229, 231, 235),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 0,
+                                    horizontal: 10,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  elevation: 0,
                                 ),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(91, 229, 231, 235),
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 0,
-                                horizontal: 10,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              elevation: 0,
-                            ),
-                            child: Text(
-                              AppLocalizations.of(context).signUpLogin,
-                              style: const TextStyle(
-                                color: AppColors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w800,
-                                fontFamily: 'Inter',
+                                child: Text(
+                                  AppLocalizations.of(context).login,
+                                  style: const TextStyle(
+                                    color: AppColors.white,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w800,
+                                    fontFamily: 'Inter',
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                            const SizedBox(width: 12),
+                            SizedBox(
+                              width: 120,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => const SignUpPage(),
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      const Color.fromARGB(91, 229, 231, 235),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 0,
+                                    horizontal: 10,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  elevation: 0,
+                                ),
+                                child: Text(
+                                  AppLocalizations.of(context).signUp,
+                                  style: const TextStyle(
+                                    color: AppColors.white,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w800,
+                                    fontFamily: 'Inter',
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),

@@ -170,6 +170,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get signUpLogin => 'Registrarse / Iniciar Sesión';
 
   @override
+  String get login => 'Iniciar Sesión';
+
+  @override
+  String get signUp => 'Registrarse';
+
+  @override
   String get businessTravelDescription =>
       'Regístrate gratis en PHPTRAVELS y disfruta\nde ahorros exclusivos en tus planes de viaje corporativo.';
 

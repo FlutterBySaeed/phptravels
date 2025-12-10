@@ -170,6 +170,12 @@ class AppLocalizationsUr extends AppLocalizations {
   String get signUpLogin => 'سائن اپ / لاگ ان';
 
   @override
+  String get login => 'لاگ ان';
+
+  @override
+  String get signUp => 'Sign up';
+
+  @override
   String get businessTravelDescription =>
       'PHPTRAVELS پر مفت سائن اپ کریں اور اپنے کارپوریٹ سفری\nمنصوبوں پر خصوصی بچت سے لطف اندوز ہوں!';
 

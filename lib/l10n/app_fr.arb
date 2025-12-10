@@ -171,5 +171,7 @@
   "veryGood": "Très bien",
   "excellent": "Excellent",
   "clear": "Effacer",
-  "showResults": "Afficher {count} sur {total} résultats"
+  "showResults": "Afficher {count} sur {total} résultats",
+  "signUp": "S'inscrire",
+  "login": "Se connecter"
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:phptravels/core/widgets/nav_bar.dart';
 import 'package:phptravels/features/home/pages/home_page.dart';
 import 'package:phptravels/features/account/pages/account_page.dart';
+import 'package:phptravels/features/Explore/explore_page.dart';
 
 class MainApp extends StatefulWidget {
   const MainApp({super.key});
@@ -20,7 +21,7 @@ class _MainAppState extends State<MainApp> {
     super.initState();
     _screens = [
       const HomeScreen(),
-      const HomeScreen(), // Placeholder for Explore
+      const ExplorePage(), // Placeholder for Explore
       const HomeScreen(), // Placeholder for Stories
       const AccountsPage(),
     ];
