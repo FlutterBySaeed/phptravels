@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/currency_provider.dart';
 import 'explore_search_page.dart';
+import 'trip_ideas_page.dart';
 
 class ExplorePage extends StatefulWidget {
   const ExplorePage({super.key});
@@ -9,353 +12,450 @@ class ExplorePage extends StatefulWidget {
 }
 
 class _ExplorePageState extends State<ExplorePage> {
-  final ScrollController _scrollController = ScrollController();
-  bool _showSearchIcon = false;
   String _selectedCity = 'Lahore';
 
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(() {
-      // Show search icon when scrolled past location selector
-      final shouldShow =
-          _scrollController.hasClients && _scrollController.offset > 60;
-      if (shouldShow != _showSearchIcon) {
-        setState(() {
-          _showSearchIcon = shouldShow;
-        });
-      }
-    });
-  }
+  final List<_Destination> _popularRow1 = const [
+    _Destination(
+      city: 'Karachi',
+      country: 'Pakistan',
+      rawPricePKR: 36700, // ~US$ 132
+      imageUrl:
+          'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400',
+    ),
+    _Destination(
+      city: 'Ras al Khaimah',
+      country: 'United Arab Emirates',
+      rawPricePKR: 48600, // ~US$ 175
+      imageUrl:
+          'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400',
+    ),
+    _Destination(
+      city: 'Quetta',
+      country: 'Pakistan',
+      rawPricePKR: 42500, // ~US$ 153
+      imageUrl:
+          'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
+    ),
+  ];
 
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
+  final List<_Destination> _popularRow2 = const [
+    _Destination(
+      city: 'Skardu',
+      country: 'Pakistan',
+      rawPricePKR: 52200, // ~US$ 188
+      imageUrl:
+          'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
+    ),
+    _Destination(
+      city: 'Dubai',
+      country: 'United Arab Emirates',
+      rawPricePKR: 54200, // ~US$ 195
+      imageUrl:
+          'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400',
+    ),
+    _Destination(
+      city: 'Istanbul',
+      country: 'Turkey',
+      rawPricePKR: 61100, // ~US$ 220
+      imageUrl:
+          'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=400',
+    ),
+  ];
+
+  final List<_Destination> _visaFreeRow1 = const [
+    _Destination(
+      city: 'Malaysia',
+      country: 'Visa-free',
+      rawPricePKR: 126400, // ~US$ 455
+      imageUrl:
+          'https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=400',
+    ),
+    _Destination(
+      city: 'Morocco',
+      country: 'Visa-free',
+      rawPricePKR: 187000, // ~US$ 673
+      imageUrl:
+          'https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?w=400',
+    ),
+  ];
+
+  final List<_Destination> _visaFreeRow2 = const [
+    _Destination(
+      city: 'Indonesia',
+      country: 'Visa-free',
+      rawPricePKR: 157000, // ~US$ 565
+      imageUrl:
+          'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=400',
+    ),
+    _Destination(
+      city: 'Thailand',
+      country: 'Visa-free',
+      rawPricePKR: 144500, // ~US$ 520
+      imageUrl:
+          'https://images.unsplash.com/photo-1494949360228-4e9bde560065?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fHRoYWlsYW5kfGVufDB8fDB8fHww',
+    ),
+  ];
+
+  final List<_Airline> _popularAirlines = const [
+    _Airline(name: 'Pakistan International', logo: '🛫'),
+    _Airline(name: 'Saudia', logo: '✈️'),
+    _Airline(name: 'Emirates', logo: '🛩️'),
+    _Airline(name: 'Airblue', logo: '🛫'),
+    _Airline(name: 'Air Arabia', logo: '✈️'),
+    _Airline(name: 'Qatar Airways', logo: '🛩️'),
+  ];
+
+  final List<_TripIdea> _tripIdeas = const [
+    _TripIdea(
+      title: 'Halal-friendly',
+      description: '87 Destinations from',
+      rawPricePKR: 55300, // ~US$ 199
+      imageUrls: [
+        'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400',
+        'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400',
+        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
+      ],
+    ),
+    _TripIdea(
+      title: 'Nature',
+      description: '25 Destinations from',
+      rawPricePKR: 89400, // ~US$ 322
+      imageUrls: [
+        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
+        'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=400',
+        'https://images.unsplash.com/photo-1505765050516-f72dcac9c60b?w=400',
+      ],
+    ),
+    _TripIdea(
+      title: 'Culture',
+      description: '45 Destinations from',
+      rawPricePKR: 68000, // ~US$ 245
+      imageUrls: [
+        'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=400',
+        'https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?w=400',
+        'https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?w=400',
+      ],
+    ),
+    _TripIdea(
+      title: 'Romantic',
+      description: '32 Destinations from',
+      rawPricePKR: 80200, // ~US$ 289
+      imageUrls: [
+        'https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=400',
+        'https://images.unsplash.com/photo-1558005530-a7958896ec60?w=400',
+        'https://images.unsplash.com/photo-1503891617560-5b8c2e28cbf6?w=400',
+      ],
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = Theme.of(context).colorScheme.primary;
-
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryColor = theme.colorScheme.primary;
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: ScrollConfiguration(
-        behavior: ScrollConfiguration.of(context).copyWith(
-          overscroll: false,
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        shadowColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        forceMaterialTransparency: true,
+        centerTitle: false,
+        titleSpacing: 16,
+        title: Text(
+          'Explore',
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        child: CustomScrollView(
-          controller: _scrollController,
-          slivers: [
-            // Collapsing App Bar - Title fixed, Location selector scrolls
-            SliverAppBar(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              surfaceTintColor: Colors.transparent,
-              elevation: 12,
-              shadowColor: Colors.black.withOpacity(0.25),
-              forceElevated: true,
-              pinned: true,
-              floating: false,
-              expandedHeight: 120,
-              collapsedHeight: 60,
-              titleSpacing: 0,
-              title: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Explore',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search, color: theme.iconTheme.color),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      body: SafeArea(
+        top: true,
+        bottom: false,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            // Location chip
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+              child: GestureDetector(
+                onTap: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ExploreSearchPage(),
                     ),
-                    AnimatedOpacity(
-                      opacity: _showSearchIcon ? 1.0 : 0.0,
-                      duration: const Duration(milliseconds: 200),
-                      child: Icon(
-                        Icons.search,
-                        size: 28,
-                        color: Theme.of(context).textTheme.bodyMedium?.color,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              flexibleSpace: FlexibleSpaceBar(
-                background: Container(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                  );
+                  if (result != null) {
+                    setState(() {
+                      _selectedCity = result['city'] ?? 'Lahore';
+                    });
+                  }
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: isDark ? theme.cardColor : const Color(0xFFF5F5F5),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-                        child: GestureDetector(
-                          onTap: () async {
-                            final result = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ExploreSearchPage(),
-                              ),
-                            );
-                            if (result != null) {
-                              // Handle selected location
-                              setState(() {
-                                _selectedCity = result['city'] ?? 'Lahore';
-                              });
-                            }
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 5,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isDark
-                                  ? Theme.of(context).cardColor
-                                  : const Color(0xFFF5F5F5),
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.location_on,
-                                  color: primaryColor,
-                                  size: 18,
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    'From $_selectedCity',
-                                    textAlign: TextAlign.center,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge
-                                        ?.copyWith(
-                                          color: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.color
-                                              ?.withOpacity(0.6),
-                                        ),
-                                  ),
-                                ),
-                                const SizedBox(width: 18),
-                              ],
-                            ),
+                      Icon(Icons.location_on, color: primaryColor, size: 18),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'From $_selectedCity',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.textTheme.bodyMedium?.color
+                                ?.withOpacity(0.7),
                           ),
                         ),
                       ),
+                      const Icon(Icons.chevron_right, size: 18),
                     ],
                   ),
                 ),
               ),
             ),
-            const SliverToBoxAdapter(child: SizedBox(height: 30)),
 
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Popular Destinations',
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontSize: 20,
-                                  ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Estimated lowest fares ',
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    fontSize: 12,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
-                                        ?.color,
-                                  ),
-                        ),
-                      ],
-                    ),
-                    Icon(
-                      Icons.chevron_right,
-                      color: Theme.of(context).textTheme.bodyMedium?.color,
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            const SizedBox(height: 12),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 16)),
-
-            // First Row - Popular Destinations Horizontal Scroll
-            SliverToBoxAdapter(
-              child: SizedBox(
-                height: 160,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  children: [
-                    _buildDestinationCard(
-                      context,
-                      'Karachi',
-                      'Pakistan',
-                      'US\$ 132',
-                      'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400',
-                      primaryColor,
-                    ),
-                    const SizedBox(width: 12),
-                    _buildDestinationCard(
-                      context,
-                      'Ras al Khaimah',
-                      'United Arab Emirates',
-                      'US\$ 175',
-                      'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400',
-                      primaryColor,
-                    ),
-                    const SizedBox(width: 12),
-                    _buildDestinationCard(
-                      context,
-                      'Quetta',
-                      'Pakistan',
-                      'US\$ 153',
-                      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
-                      primaryColor,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 12)),
-
-            // Second Row - Popular Destinations Horizontal Scroll
-            SliverToBoxAdapter(
-              child: SizedBox(
-                height: 160,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  children: [
-                    _buildDestinationCard(
-                      context,
-                      'Skardu',
-                      'Pakistan',
-                      'US\$ 188',
-                      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
-                      primaryColor,
-                    ),
-                    const SizedBox(width: 12),
-                    _buildDestinationCard(
-                      context,
-                      'Dubai',
-                      'United Arab Emirates',
-                      'US\$ 195',
-                      'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400',
-                      primaryColor,
-                    ),
-                    const SizedBox(width: 12),
-                    _buildDestinationCard(
-                      context,
-                      'Istanbul',
-                      'Turkey',
-                      'US\$ 220',
-                      'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=400',
-                      primaryColor,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 32)),
-
-            // Featured Destinations Section
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Text(
-                  'Featured Destinations',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: 20,
+            // Popular Destinations Header
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Popular Destinations',
+                        style:
+                            theme.textTheme.titleMedium?.copyWith(fontSize: 20),
                       ),
-                ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Estimated lowest fares ',
+                        style:
+                            theme.textTheme.bodySmall?.copyWith(fontSize: 12),
+                      ),
+                    ],
+                  ),
+                  Icon(Icons.chevron_right, color: theme.iconTheme.color),
+                ],
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 16)),
+            const SizedBox(height: 16),
 
-            // Saudi Arabia Featured Card
-            SliverToBoxAdapter(
-              child: Padding(
+            _horizontalDestinations(context, _popularRow1, primaryColor),
+            const SizedBox(height: 12),
+            _horizontalDestinations(context, _popularRow2, primaryColor),
+
+            const SizedBox(height: 32),
+
+            // Featured Destinations
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'Featured Destinations',
+                style: theme.textTheme.titleMedium?.copyWith(fontSize: 20),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _buildFeaturedCard(context, primaryColor),
+            ),
+
+            const SizedBox(height: 32),
+
+            // Plan Your Getaway
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Plan Your Getaway',
+                    style: theme.textTheme.titleMedium?.copyWith(fontSize: 20),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Our suggestions to maximize your public holidays',
+                    style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            SizedBox(
+              height: 400,
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: _buildFeaturedCard(context, primaryColor),
+                itemCount: 12,
+                itemBuilder: (context, index) {
+                  final now = DateTime.now();
+                  final monthDate = DateTime(now.year, now.month + index, 1);
+                  return Padding(
+                    padding: EdgeInsets.only(right: index < 11 ? 16 : 0),
+                    child: _buildCalendarCard(context, monthDate),
+                  );
+                },
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 48)),
+            const SizedBox(height: 40),
 
-            // Plan Your Getaway Section
-            SliverToBoxAdapter(
-              child: Padding(
+            // Visa-Free Regions section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Visa-Free Regions',
+                        style:
+                            theme.textTheme.titleMedium?.copyWith(fontSize: 20),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Easier trips without visa hassle',
+                        style:
+                            theme.textTheme.bodySmall?.copyWith(fontSize: 12),
+                      ),
+                    ],
+                  ),
+                  Icon(Icons.chevron_right, color: theme.iconTheme.color),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+            _horizontalDestinations(
+              context,
+              _visaFreeRow1,
+              primaryColor,
+            ),
+            const SizedBox(height: 12),
+            _horizontalDestinations(
+              context,
+              _visaFreeRow2,
+              primaryColor,
+            ),
+            const SizedBox(height: 40),
+
+            // Popular Airlines section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'Popular Airlines',
+                style: theme.textTheme.titleMedium?.copyWith(fontSize: 20),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 1.0,
+                ),
+                itemCount: _popularAirlines.length,
+                itemBuilder: (context, index) {
+                  final airline = _popularAirlines[index];
+                  return _buildAirlineCard(context, airline);
+                },
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
+            // Trip Ideas section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Trip Ideas',
+                    style: theme.textTheme.titleMedium?.copyWith(fontSize: 20),
+                  ),
+                  Icon(Icons.chevron_right, color: theme.iconTheme.color),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            SizedBox(
+              height: 230,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Plan Your Getaway',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontSize: 20,
-                          ),
-                    ),
-                    const SizedBox(height: 0),
-                    Text(
-                      'Our suggestions to maximize your public holidays',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontSize: 12,
-                            color: Theme.of(context).textTheme.bodySmall?.color,
-                          ),
-                    ),
-                  ],
-                ),
+                itemCount: _tripIdeas.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 16),
+                itemBuilder: (context, index) {
+                  final trip = _tripIdeas[index];
+                  return _buildTripIdeaCard(context, trip);
+                },
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
-
-            // Calendar Widget - Horizontal Scroll
-            SliverToBoxAdapter(
-              child: SizedBox(
-                height: 395,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  itemCount: 12,
-                  itemBuilder: (context, index) {
-                    final now = DateTime.now();
-                    final monthDate = DateTime(now.year, now.month + index, 1);
-                    return Padding(
-                      padding: EdgeInsets.only(right: index < 11 ? 16 : 0),
-                      child: _buildCalendarCard(context, monthDate),
-                    );
-                  },
-                ),
-              ),
-            ),
-
-            SliverPadding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).padding.bottom + 60,
-              ),
-            ),
+            const SizedBox(height: 12),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _horizontalDestinations(
+    BuildContext context,
+    List<_Destination> destinations,
+    Color priceColor,
+  ) {
+    return SizedBox(
+      height: 160,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        itemCount: destinations.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        itemBuilder: (context, index) {
+          final d = destinations[index];
+          return _buildDestinationCard(
+            context,
+            d.city,
+            d.country,
+            d.rawPricePKR,
+            d.imageUrl,
+            priceColor,
+          );
+        },
       ),
     );
   }
@@ -364,10 +464,12 @@ class _ExplorePageState extends State<ExplorePage> {
     BuildContext context,
     String city,
     String country,
-    String price,
+    double rawPricePKR,
     String imageUrl,
     Color priceColor,
   ) {
+    final currencyProvider = Provider.of<CurrencyProvider>(context);
+
     return SizedBox(
       width: 160,
       child: Container(
@@ -453,7 +555,7 @@ class _ExplorePageState extends State<ExplorePage> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    price,
+                    currencyProvider.formatPrice(rawPricePKR, compact: true),
                     style: TextStyle(
                       color: priceColor,
                       fontSize: 16,
@@ -472,18 +574,13 @@ class _ExplorePageState extends State<ExplorePage> {
 
   Widget _buildFeaturedCard(BuildContext context, Color priceColor) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final currencyProvider = Provider.of<CurrencyProvider>(context);
+    const featuredPricePKR = 56700.0; // ~US$ 204
 
     return Container(
       decoration: BoxDecoration(
         color: isDark ? Theme.of(context).cardColor : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -572,7 +669,7 @@ class _ExplorePageState extends State<ExplorePage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'US\$ 204',
+                  currencyProvider.formatPrice(featuredPricePKR, compact: true),
                   style: TextStyle(
                     color: priceColor,
                     fontSize: 18,
@@ -614,14 +711,13 @@ class _ExplorePageState extends State<ExplorePage> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: isDark ? Theme.of(context).cardColor : Colors.white,
-        borderRadius: BorderRadius.circular(0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.15),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withOpacity(0.1)
+              : Colors.black.withOpacity(0.08),
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -761,4 +857,209 @@ class _ExplorePageState extends State<ExplorePage> {
       ),
     );
   }
+
+  Widget _buildAirlineCard(BuildContext context, _Airline airline) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? Theme.of(context).cardColor : Colors.white,
+        borderRadius: BorderRadius.circular(0),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withOpacity(0.1)
+              : Colors.black.withOpacity(0.08),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            airline.logo,
+            style: const TextStyle(fontSize: 32),
+          ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              airline.name,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontSize: 11,
+                  ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTripIdeaCard(BuildContext context, _TripIdea trip) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = Theme.of(context).colorScheme.primary;
+    final currencyProvider = Provider.of<CurrencyProvider>(context);
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TripIdeasPage(
+              initialCategory: trip.title,
+            ),
+          ),
+        );
+      },
+      child: Container(
+        width: 200,
+        height: 310,
+        decoration: BoxDecoration(
+          color: isDark ? Theme.of(context).cardColor : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withOpacity(0.1)
+                : Colors.black.withOpacity(0.08),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Collage Image Layout
+            SizedBox(
+              height: 100,
+              child: Row(
+                children: [
+                  // Large image on the left
+                  Expanded(
+                    flex: 3,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                        ),
+                        image: DecorationImage(
+                          image: NetworkImage(trip.imageUrls[0]),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Two smaller images stacked on the right
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: NetworkImage(trip.imageUrls[1]),
+                                fit: BoxFit.cover,
+                              ),
+                              borderRadius: const BorderRadius.only(
+                                topRight: Radius.circular(12),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: NetworkImage(trip.imageUrls[2]),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Content
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    trip.title,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    trip.description,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontSize: 12,
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.color
+                              ?.withOpacity(0.6),
+                        ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    currencyProvider.formatPrice(trip.rawPricePKR,
+                        compact: true),
+                    style: TextStyle(
+                      color: primaryColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Destination {
+  final String city;
+  final String country;
+  final double rawPricePKR;
+  final String imageUrl;
+  const _Destination({
+    required this.city,
+    required this.country,
+    required this.rawPricePKR,
+    required this.imageUrl,
+  });
+}
+
+class _Airline {
+  final String name;
+  final String logo;
+  const _Airline({
+    required this.name,
+    required this.logo,
+  });
+}
+
+class _TripIdea {
+  final String title;
+  final String description;
+  final double rawPricePKR;
+  final List<String> imageUrls;
+  const _TripIdea({
+    required this.title,
+    required this.description,
+    required this.rawPricePKR,
+    required this.imageUrls,
+  });
 }

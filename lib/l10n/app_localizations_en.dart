@@ -536,4 +536,129 @@ class AppLocalizationsEn extends AppLocalizations {
   String showResults(Object count, Object total) {
     return 'Show $count of $total results';
   }
+
+  @override
+  String get loginTitle => 'Login';
+
+  @override
+  String get signUpTitle => 'Sign Up';
+
+  @override
+  String get resetPasswordTitle => 'Reset Password';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get emailPlaceholder => 'example@email.com';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get passwordPlaceholder => 'Enter your password';
+
+  @override
+  String get confirmPassword => 'Confirm Password';
+
+  @override
+  String get confirmPasswordPlaceholder => 'Re-enter your password';
+
+  @override
+  String get firstName => 'First Name';
+
+  @override
+  String get firstNamePlaceholder => 'Enter your first name';
+
+  @override
+  String get lastName => 'Last Name';
+
+  @override
+  String get lastNamePlaceholder => 'Enter your last name';
+
+  @override
+  String get securityCheck => 'Security Check';
+
+  @override
+  String get securityCheckPlaceholder => 'Type: PHPTRAVELS';
+
+  @override
+  String get rememberMe => 'Remember Me';
+
+  @override
+  String get forgotPassword => 'Forgot Password?';
+
+  @override
+  String get dontHaveAccount => 'Don\'t have an Account?';
+
+  @override
+  String get alreadyHaveAccount => 'Already have an account?';
+
+  @override
+  String get signIn => 'Sign in';
+
+  @override
+  String get loginButton => 'Login';
+
+  @override
+  String get signUpButton => 'Sign up';
+
+  @override
+  String get createAccountButton => 'Create Account';
+
+  @override
+  String get backToLogin => 'Back to Login';
+
+  @override
+  String get sendResetInstructions => 'Send Reset Instructions';
+
+  @override
+  String get resetPasswordSubtitle =>
+      'Enter email to receive reset instructions';
+
+  @override
+  String get emailAddress => 'Email Address';
+
+  @override
+  String get enterYourEmail => 'Enter your email';
+
+  @override
+  String get validEmailError => 'Please enter a valid email address';
+
+  @override
+  String get resetEmailSent =>
+      'We have sent password reset instructions to your email address';
+
+  @override
+  String get checkYourEmail => 'Check Your Email';
+
+  @override
+  String get rememberYourPassword => 'Remember your password?';
+
+  @override
+  String get agreeToTermsText => 'By creating an account, you agree to our';
+
+  @override
+  String get termsAndConditions => 'Terms & Conditions';
+
+  @override
+  String get and => 'and';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get agreeToTermsError => 'Please agree to the terms and conditions';
+
+  @override
+  String get loginFailed => 'Login failed';
+
+  @override
+  String get signupFailed => 'Signup failed. Please try again.';
+
+  @override
+  String get failedToSendReset => 'Failed to send reset instructions.';
+
+  @override
+  String get minimumCharacters => 'Minimum 8 characters';
 }

@@ -137,7 +137,8 @@ class _AccountsPageState extends State<AccountsPage> {
             end: Alignment.bottomRight,
           ),
         ),
-        padding: const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 24),
+        padding:
+            const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 24),
         child: Column(
           children: [
             CircleAvatar(
@@ -313,6 +314,18 @@ class _AccountsPageState extends State<AccountsPage> {
                               width: 120,
                               child: ElevatedButton(
                                 onPressed: () {
+                                  final auth = Provider.of<AuthProvider>(
+                                      context,
+                                      listen: false);
+                                  if (auth.isAuthenticated) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content:
+                                            Text('You are already signed in'),
+                                      ),
+                                    );
+                                    return;
+                                  }
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (context) => const LoginPage(),
@@ -347,6 +360,18 @@ class _AccountsPageState extends State<AccountsPage> {
                               width: 120,
                               child: ElevatedButton(
                                 onPressed: () {
+                                  final auth = Provider.of<AuthProvider>(
+                                      context,
+                                      listen: false);
+                                  if (auth.isAuthenticated) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content:
+                                            Text('You are already signed in'),
+                                      ),
+                                    );
+                                    return;
+                                  }
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (context) => const SignUpPage(),
@@ -710,54 +735,6 @@ class _AccountsPageState extends State<AccountsPage> {
                       ),
                 ),
               ),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 18,
-                color: Theme.of(context).textTheme.bodyMedium?.color,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSettingRow(
-    BuildContext context,
-    IconData icon,
-    String title,
-    String value,
-  ) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {},
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-          child: Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                alignment: Alignment.center,
-                child: Icon(icon,
-                    size: 24, color: Theme.of(context).iconTheme.color),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  title,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
-                ),
-              ),
-              Text(
-                value,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(width: 6),
               Icon(
                 Icons.arrow_forward_ios,
                 size: 18,

@@ -539,4 +539,132 @@ class AppLocalizationsFr extends AppLocalizations {
   String showResults(Object count, Object total) {
     return 'Afficher $count sur $total résultats';
   }
+
+  @override
+  String get loginTitle => 'Connexion';
+
+  @override
+  String get signUpTitle => 'Inscription';
+
+  @override
+  String get resetPasswordTitle => 'Réinitialiser le mot de passe';
+
+  @override
+  String get email => 'E-mail';
+
+  @override
+  String get emailPlaceholder => 'exemple@email.com';
+
+  @override
+  String get password => 'Mot de passe';
+
+  @override
+  String get passwordPlaceholder => 'Entrez votre mot de passe';
+
+  @override
+  String get confirmPassword => 'Confirmer le mot de passe';
+
+  @override
+  String get confirmPasswordPlaceholder => 'Ressaisissez votre mot de passe';
+
+  @override
+  String get firstName => 'Prénom';
+
+  @override
+  String get firstNamePlaceholder => 'Entrez votre prénom';
+
+  @override
+  String get lastName => 'Nom de famille';
+
+  @override
+  String get lastNamePlaceholder => 'Entrez votre nom de famille';
+
+  @override
+  String get securityCheck => 'Vérification de sécurité';
+
+  @override
+  String get securityCheckPlaceholder => 'Tapez: PHPTRAVELS';
+
+  @override
+  String get rememberMe => 'Se souvenir de moi';
+
+  @override
+  String get forgotPassword => 'Oublié ?';
+
+  @override
+  String get dontHaveAccount => 'Vous n\'avez pas de compte ?';
+
+  @override
+  String get alreadyHaveAccount => 'Vous avez déjà un compte ?';
+
+  @override
+  String get signIn => 'Se connecter';
+
+  @override
+  String get loginButton => 'Connexion';
+
+  @override
+  String get signUpButton => 'S\'inscrire';
+
+  @override
+  String get createAccountButton => 'Créer un compte';
+
+  @override
+  String get backToLogin => 'Retour à la connexion';
+
+  @override
+  String get sendResetInstructions =>
+      'Envoyer les instructions de réinitialisation';
+
+  @override
+  String get resetPasswordSubtitle =>
+      'Entrez votre e-mail pour recevoir les instructions de réinitialisation';
+
+  @override
+  String get emailAddress => 'Adresse e-mail';
+
+  @override
+  String get enterYourEmail => 'Entrez votre e-mail';
+
+  @override
+  String get validEmailError => 'Veuillez entrer une adresse e-mail valide';
+
+  @override
+  String get resetEmailSent =>
+      'Nous avons envoyé les instructions de réinitialisation du mot de passe à votre adresse e-mail';
+
+  @override
+  String get checkYourEmail => 'Vérifiez votre e-mail';
+
+  @override
+  String get rememberYourPassword =>
+      'Vous vous souvenez de votre mot de passe ?';
+
+  @override
+  String get agreeToTermsText => 'En créant un compte, vous acceptez nos';
+
+  @override
+  String get termsAndConditions => 'Conditions générales';
+
+  @override
+  String get and => 'et';
+
+  @override
+  String get privacyPolicy => 'Politique de confidentialité';
+
+  @override
+  String get agreeToTermsError => 'Veuillez accepter les conditions générales';
+
+  @override
+  String get loginFailed => 'Échec de la connexion';
+
+  @override
+  String get signupFailed => 'Échec de l\'inscription. Veuillez réessayer.';
+
+  @override
+  String get failedToSendReset =>
+      'Échec de l\'envoi des instructions de réinitialisation.';
+
+  @override
+  String get minimumCharacters => 'Minimum 8 caractères';
 }

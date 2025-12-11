@@ -539,4 +539,129 @@ class AppLocalizationsUr extends AppLocalizations {
   String showResults(Object count, Object total) {
     return '$total میں سے $count نتائج دکھائیں';
   }
+
+  @override
+  String get loginTitle => 'لاگ ان';
+
+  @override
+  String get signUpTitle => 'سائن اپ';
+
+  @override
+  String get resetPasswordTitle => 'پاس ورڈ ری سیٹ کریں';
+
+  @override
+  String get email => 'ای میل';
+
+  @override
+  String get emailPlaceholder => 'example@email.com';
+
+  @override
+  String get password => 'پاس ورڈ';
+
+  @override
+  String get passwordPlaceholder => 'اپنا پاس ورڈ درج کریں';
+
+  @override
+  String get confirmPassword => 'پاس ورڈ کی تصدیق کریں';
+
+  @override
+  String get confirmPasswordPlaceholder => 'اپنا پاس ورڈ دوبارہ درج کریں';
+
+  @override
+  String get firstName => 'پہلا نام';
+
+  @override
+  String get firstNamePlaceholder => 'اپنا پہلا نام درج کریں';
+
+  @override
+  String get lastName => 'آخری نام';
+
+  @override
+  String get lastNamePlaceholder => 'اپنا آخری نام درج کریں';
+
+  @override
+  String get securityCheck => 'سیکیورٹی چیک';
+
+  @override
+  String get securityCheckPlaceholder => 'ٹائپ کریں: PHPTRAVELS';
+
+  @override
+  String get rememberMe => 'مجھے یاد رکھیں';
+
+  @override
+  String get forgotPassword => 'پاس ورڈ بھول گئے؟';
+
+  @override
+  String get dontHaveAccount => 'اکاؤنٹ نہیں ہے؟';
+
+  @override
+  String get alreadyHaveAccount => 'پہلے سے اکاؤنٹ ہے؟';
+
+  @override
+  String get signIn => 'سائن ان';
+
+  @override
+  String get loginButton => 'لاگ ان';
+
+  @override
+  String get signUpButton => 'سائن اپ';
+
+  @override
+  String get createAccountButton => 'اکاؤنٹ بنائیں';
+
+  @override
+  String get backToLogin => 'لاگ ان پر واپس جائیں';
+
+  @override
+  String get sendResetInstructions => 'ری سیٹ ہدایات بھیجیں';
+
+  @override
+  String get resetPasswordSubtitle =>
+      'ری سیٹ ہدایات حاصل کرنے کے لیے ای میل درج کریں';
+
+  @override
+  String get emailAddress => 'ای میل ایڈریس';
+
+  @override
+  String get enterYourEmail => 'اپنا ای میل درج کریں';
+
+  @override
+  String get validEmailError => 'براہ کرم درست ای میل ایڈریس درج کریں';
+
+  @override
+  String get resetEmailSent =>
+      'ہم نے پاس ورڈ ری سیٹ ہدایات آپ کے ای میل ایڈریس پر بھیج دی ہیں';
+
+  @override
+  String get checkYourEmail => 'اپنا ای میل چیک کریں';
+
+  @override
+  String get rememberYourPassword => 'اپنا پاس ورڈ یاد ہے؟';
+
+  @override
+  String get agreeToTermsText => 'اکاؤنٹ بنا کر، آپ ہماری';
+
+  @override
+  String get termsAndConditions => 'شرائط و ضوابط';
+
+  @override
+  String get and => 'اور';
+
+  @override
+  String get privacyPolicy => 'رازداری کی پالیسی';
+
+  @override
+  String get agreeToTermsError => 'براہ کرم شرائط و ضوابط سے اتفاق کریں';
+
+  @override
+  String get loginFailed => 'لاگ ان ناکام';
+
+  @override
+  String get signupFailed => 'سائن اپ ناکام۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get failedToSendReset => 'ری سیٹ ہدایات بھیجنے میں ناکام۔';
+
+  @override
+  String get minimumCharacters => 'کم از کم 8 حروف';
 }

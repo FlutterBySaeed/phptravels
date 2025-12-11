@@ -536,4 +536,129 @@ class AppLocalizationsAr extends AppLocalizations {
   String showResults(Object count, Object total) {
     return 'عرض $count من $total نتيجة';
   }
+
+  @override
+  String get loginTitle => 'تسجيل الدخول';
+
+  @override
+  String get signUpTitle => 'إنشاء حساب';
+
+  @override
+  String get resetPasswordTitle => 'إعادة تعيين كلمة المرور';
+
+  @override
+  String get email => 'البريد الإلكتروني';
+
+  @override
+  String get emailPlaceholder => 'example@email.com';
+
+  @override
+  String get password => 'كلمة المرور';
+
+  @override
+  String get passwordPlaceholder => 'أدخل كلمة المرور';
+
+  @override
+  String get confirmPassword => 'تأكيد كلمة المرور';
+
+  @override
+  String get confirmPasswordPlaceholder => 'أعد إدخال كلمة المرور';
+
+  @override
+  String get firstName => 'الاسم الأول';
+
+  @override
+  String get firstNamePlaceholder => 'أدخل اسمك الأول';
+
+  @override
+  String get lastName => 'اسم العائلة';
+
+  @override
+  String get lastNamePlaceholder => 'أدخل اسم العائلة';
+
+  @override
+  String get securityCheck => 'فحص الأمان';
+
+  @override
+  String get securityCheckPlaceholder => 'اكتب: PHPTRAVELS';
+
+  @override
+  String get rememberMe => 'تذكرني';
+
+  @override
+  String get forgotPassword => 'نسيت كلمة المرور؟';
+
+  @override
+  String get dontHaveAccount => 'ليس لديك حساب؟';
+
+  @override
+  String get alreadyHaveAccount => 'لديك حساب بالفعل؟';
+
+  @override
+  String get signIn => 'تسجيل الدخول';
+
+  @override
+  String get loginButton => 'تسجيل الدخول';
+
+  @override
+  String get signUpButton => 'إنشاء حساب';
+
+  @override
+  String get createAccountButton => 'إنشاء حساب';
+
+  @override
+  String get backToLogin => 'العودة لتسجيل الدخول';
+
+  @override
+  String get sendResetInstructions => 'إرسال تعليمات إعادة التعيين';
+
+  @override
+  String get resetPasswordSubtitle =>
+      'أدخل البريد الإلكتروني لتلقي تعليمات إعادة التعيين';
+
+  @override
+  String get emailAddress => 'عنوان البريد الإلكتروني';
+
+  @override
+  String get enterYourEmail => 'أدخل بريدك الإلكتروني';
+
+  @override
+  String get validEmailError => 'يرجى إدخال عنوان بريد إلكتروني صالح';
+
+  @override
+  String get resetEmailSent =>
+      'لقد أرسلنا تعليمات إعادة تعيين كلمة المرور إلى بريدك الإلكتروني';
+
+  @override
+  String get checkYourEmail => 'تحقق من بريدك الإلكتروني';
+
+  @override
+  String get rememberYourPassword => 'هل تتذكر كلمة المرور؟';
+
+  @override
+  String get agreeToTermsText => 'بإنشاء حساب، فإنك توافق على';
+
+  @override
+  String get termsAndConditions => 'الشروط والأحكام';
+
+  @override
+  String get and => 'و';
+
+  @override
+  String get privacyPolicy => 'سياسة الخصوصية';
+
+  @override
+  String get agreeToTermsError => 'يرجى الموافقة على الشروط والأحكام';
+
+  @override
+  String get loginFailed => 'فشل تسجيل الدخول';
+
+  @override
+  String get signupFailed => 'فشل إنشاء الحساب. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get failedToSendReset => 'فشل إرسال تعليمات إعادة التعيين.';
+
+  @override
+  String get minimumCharacters => '8 أحرف كحد أدنى';
 }

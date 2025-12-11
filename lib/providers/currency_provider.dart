@@ -37,6 +37,11 @@ class CurrencyProvider extends ChangeNotifier {
     Currency(
         code: 'SAR', symbol: 'ر.س', name: 'Saudi Riyal', rateFromPKR: 0.0135),
     Currency(
+        code: 'BHD',
+        symbol: 'BHD',
+        name: 'Bahraini Dinar',
+        rateFromPKR: 0.00135),
+    Currency(
         code: 'EGP', symbol: 'ج.م', name: 'Egyptian Pound', rateFromPKR: 0.176),
   ];
 

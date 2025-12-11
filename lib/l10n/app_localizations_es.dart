@@ -538,4 +538,133 @@ class AppLocalizationsEs extends AppLocalizations {
   String showResults(Object count, Object total) {
     return 'Mostrar $count de $total resultados';
   }
+
+  @override
+  String get loginTitle => 'Iniciar Sesión';
+
+  @override
+  String get signUpTitle => 'Registrarse';
+
+  @override
+  String get resetPasswordTitle => 'Restablecer Contraseña';
+
+  @override
+  String get email => 'Correo Electrónico';
+
+  @override
+  String get emailPlaceholder => 'ejemplo@email.com';
+
+  @override
+  String get password => 'Contraseña';
+
+  @override
+  String get passwordPlaceholder => 'Ingresa tu contraseña';
+
+  @override
+  String get confirmPassword => 'Confirmar Contraseña';
+
+  @override
+  String get confirmPasswordPlaceholder => 'Vuelve a ingresar tu contraseña';
+
+  @override
+  String get firstName => 'Nombre';
+
+  @override
+  String get firstNamePlaceholder => 'Ingresa tu nombre';
+
+  @override
+  String get lastName => 'Apellido';
+
+  @override
+  String get lastNamePlaceholder => 'Ingresa tu apellido';
+
+  @override
+  String get securityCheck => 'Verificación de Seguridad';
+
+  @override
+  String get securityCheckPlaceholder => 'Escribe: PHPTRAVELS';
+
+  @override
+  String get rememberMe => 'Recuérdame';
+
+  @override
+  String get forgotPassword => '¿Olvidaste tu Contraseña?';
+
+  @override
+  String get dontHaveAccount => '¿No tienes una Cuenta?';
+
+  @override
+  String get alreadyHaveAccount => '¿Ya tienes una cuenta?';
+
+  @override
+  String get signIn => 'Iniciar Sesión';
+
+  @override
+  String get loginButton => 'Iniciar Sesión';
+
+  @override
+  String get signUpButton => 'Registrarse';
+
+  @override
+  String get createAccountButton => 'Crear Cuenta';
+
+  @override
+  String get backToLogin => 'Volver al Inicio de Sesión';
+
+  @override
+  String get sendResetInstructions =>
+      'Enviar Instrucciones de Restablecimiento';
+
+  @override
+  String get resetPasswordSubtitle =>
+      'Ingresa tu correo para recibir instrucciones de restablecimiento';
+
+  @override
+  String get emailAddress => 'Dirección de Correo Electrónico';
+
+  @override
+  String get enterYourEmail => 'Ingresa tu correo electrónico';
+
+  @override
+  String get validEmailError =>
+      'Por favor ingresa una dirección de correo válida';
+
+  @override
+  String get resetEmailSent =>
+      'Hemos enviado instrucciones para restablecer tu contraseña a tu correo electrónico';
+
+  @override
+  String get checkYourEmail => 'Revisa tu Correo Electrónico';
+
+  @override
+  String get rememberYourPassword => '¿Recuerdas tu contraseña?';
+
+  @override
+  String get agreeToTermsText => 'Al crear una cuenta, aceptas nuestros';
+
+  @override
+  String get termsAndConditions => 'Términos y Condiciones';
+
+  @override
+  String get and => 'y';
+
+  @override
+  String get privacyPolicy => 'Política de Privacidad';
+
+  @override
+  String get agreeToTermsError => 'Por favor acepta los términos y condiciones';
+
+  @override
+  String get loginFailed => 'Error al iniciar sesión';
+
+  @override
+  String get signupFailed =>
+      'Error al registrarse. Por favor intenta de nuevo.';
+
+  @override
+  String get failedToSendReset =>
+      'Error al enviar instrucciones de restablecimiento.';
+
+  @override
+  String get minimumCharacters => 'Mínimo 8 caracteres';
 }

@@ -172,7 +172,7 @@ class _DestinationSearchPageState extends State<DestinationSearchPage> {
                   controller: _searchController,
                   focusNode: _searchFocus,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.w400,
                       ),
                   decoration: InputDecoration(
@@ -181,7 +181,7 @@ class _DestinationSearchPageState extends State<DestinationSearchPage> {
                     focusedBorder: InputBorder.none,
                     hintText: 'Where to?',
                     hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontSize: 18,
+                          fontSize: 16,
                           color: Colors.grey[400],
                           fontWeight: FontWeight.w400,
                         ),
@@ -190,13 +190,22 @@ class _DestinationSearchPageState extends State<DestinationSearchPage> {
                 ),
               ),
               if (_searchController.text.isNotEmpty)
-                IconButton(
-                  icon: Icon(
-                    Icons.close,
-                    size: 18,
-                    color: Theme.of(context).hintColor,
+                GestureDetector(
+                  onTap: _clearSearch,
+                  child: Container(
+                    width: 16,
+                    height: 16,
+                    margin: const EdgeInsets.only(right: 8),
+                    decoration: const BoxDecoration(
+                      color: Colors.black87,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.close,
+                      size: 12,
+                      color: Colors.white,
+                    ),
                   ),
-                  onPressed: _clearSearch,
                 ),
             ],
           ),
